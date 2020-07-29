@@ -326,3 +326,13 @@ const createTripСostTemplate = () => {
     </p>`
   );
 };
+
+/**
+ * @description Выполняет вставку в DOM.
+ * @param {Object} container Контейнер для вставки.
+ * @param {String} template Разметка в виде строки.
+ * @param {String} place Положение в разметке.
+ */
+const render = (container, template, place = `beforeend`) => {
+  container.insertAdjacentHTML(place, template);
+};
