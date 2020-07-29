@@ -1,5 +1,7 @@
 "use strict";
 
+const EVENT_COUNT = 3;
+
 /**
  * @description Возвращает разметку меню.
  * @return {String} Разметка меню.
@@ -316,6 +318,33 @@ const createRouteInfoTemplate = () => {
 };
 
 /**
+ * @description Возвращает разметку основного контента.
+ * @return {String} Разметка основного контента.
+ */
+const createDayListTemplate = () => {
+  return (`<ul class="trip-days"></ul>`);
+};
+
+/**
+ * @description Возвращает разметку дня.
+ * @return {String} Разметка дня.
+ */
+const createDayTemplate = () => {
+  return (
+    `<li class="trip-days__item  day">
+      <div class="day__info">
+        <span class="day__counter">1</span>
+        <time
+          class="day__date"
+          datetime="2019-03-18"
+        >MAR 18</time>
+      </div>
+      <ul class="trip-events__list"></ul>
+    </li>`
+  );
+};
+
+/**
  * @description Возвращает разметку стоимости поездки.
  * @return {String} Разметка стоимости поездки.
  */
@@ -336,3 +365,34 @@ const createTripСostTemplate = () => {
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
+
+const header = document.querySelector(`.page-header`);
+const tripMain = header.querySelector(`.trip-main`);
+
+render(tripMain, createRouteInfoTemplate(), `afterbegin`);
+
+const tripInfo = header.querySelector(`.trip-info`);
+
+render(tripInfo, createTripСostTemplate());
+
+const tripControls = tripMain.querySelector(`.trip-controls`);
+
+render(tripControls, createSiteMenuTemplate(), `afterbegin`);
+render(tripControls, createFilterTemplate());
+
+const main = document.querySelector(`.page-main`);
+const tripEvents = main.querySelector(`.trip-events`);
+
+render(tripEvents, createSortTemplate());
+render(tripEvents, createFormTemplate());
+render(tripEvents, createDayListTemplate());
+
+const tripDays = tripEvents.querySelector(`.trip-days`);
+
+render(tripDays, createDayTemplate());
+
+const tripEventsList = tripDays.querySelector(`.trip-events__list`);
+
+for (let i = 0; i < EVENT_COUNT; i++) {
+  render(tripEventsList, createWaypointTemplate());
+}
