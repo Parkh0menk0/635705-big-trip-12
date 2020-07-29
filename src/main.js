@@ -2,10 +2,6 @@
 
 const EVENT_COUNT = 3;
 
-/**
- * @description Возвращает разметку меню.
- * @return {String} Разметка меню.
- */
 const createSiteMenuTemplate = () => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
@@ -15,10 +11,6 @@ const createSiteMenuTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку фильтра.
- * @return {String} Разметка фильтра.
- */
 const createFilterTemplate = () => {
   return (
     `<form class="trip-filters" action="#" method="get">
@@ -42,10 +34,6 @@ const createFilterTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку сортировки.
- * @return {String} Разметка сортировки.
- */
 const createSortTemplate = () => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -75,10 +63,6 @@ const createSortTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку формы создания/редактирования.
- * @return {String} Разметка формы создания/редактирования.
- */
 const createFormTemplate = () => {
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -258,10 +242,6 @@ const createFormTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку точки маршрута.
- * @return {String} Разметка точки маршрута.
- */
 const createWaypointTemplate = () => {
   return (
     `<li class="trip-events__item">
@@ -301,10 +281,6 @@ const createWaypointTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку информации о маршруте.
- * @return {String} Разметка информации о маршруте.
- */
 const createRouteInfoTemplate = () => {
   return (
     `<section class="trip-main__trip-info  trip-info">
@@ -317,18 +293,10 @@ const createRouteInfoTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку основного контента.
- * @return {String} Разметка основного контента.
- */
 const createDayListTemplate = () => {
   return (`<ul class="trip-days"></ul>`);
 };
 
-/**
- * @description Возвращает разметку дня.
- * @return {String} Разметка дня.
- */
 const createDayTemplate = () => {
   return (
     `<li class="trip-days__item  day">
@@ -344,10 +312,6 @@ const createDayTemplate = () => {
   );
 };
 
-/**
- * @description Возвращает разметку стоимости поездки.
- * @return {String} Разметка стоимости поездки.
- */
 const createTripСostTemplate = () => {
   return (
     `<p class="trip-info__cost">
@@ -356,12 +320,6 @@ const createTripСostTemplate = () => {
   );
 };
 
-/**
- * @description Выполняет вставку в DOM.
- * @param {Object} container Контейнер для вставки.
- * @param {String} template Разметка в виде строки.
- * @param {String} place Положение в разметке.
- */
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
