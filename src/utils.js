@@ -6,9 +6,9 @@ export const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
-export const create = (htmlString) => {
+export const create = (template) => {
   var div = document.createElement('div');
-  div.innerHTML = htmlString.trim();
+  div.innerHTML = template.trim();
 
   return div.firstChild;
 };
