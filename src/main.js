@@ -10,7 +10,6 @@ import {createRouteInfoTemplate} from "./view/route-info.js";
 import {createDayListTemplate} from "./view/day-list.js";
 import {createDayTemplate} from "./view/day.js";
 import {createTripСostTemplate} from "./view/trip-cost.js";
-import {createOfferTemplate} from "./view/offer.js";
 import {events} from "./mock/events.js";
 
 const header = document.querySelector(`.page-header`);
@@ -42,9 +41,8 @@ dates.forEach((date, dateIndex) => {
 
   events
     .filter((_event) => new Date(_event.startDate.toDateString === date))
-    .forEach((_event, eventIndex) => {
+    .forEach((_event) => {
       render(day.querySelector(`.trip-events__list`), createWaypointTemplate(_event));
-      _event.offers.forEach(offer => render(day.querySelectorAll(`.event__selected-offers`)[eventIndex], createOfferTemplate(offer)));
     });
 
   render(tripDays, day.parentElement.innerHTML);
