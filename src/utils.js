@@ -36,7 +36,7 @@ export const toLocaleDate = (date) => {
   return date.toLocaleString('en-US', {month: 'short', day: `2-digit`}).toUpperCase();
 };
 
-export const toISOStringWithoutSecsAndMillisecs = (date) => {
+export const toISODate = (date) => {
   const dStr = new Date(date).toISOString();
 
   return dStr.substring(0, dStr.indexOf(':', dStr.indexOf(':') + 1))

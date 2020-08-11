@@ -1,4 +1,4 @@
-import {toISOStringWithoutSecsAndMillisecs, toHoursAndMinutes, durationTime} from "./../utils.js";
+import {toISODate, toHoursAndMinutes, durationTime} from "./../utils.js";
 
 export const createWaypointTemplate = (event) => {
   return (
@@ -11,9 +11,9 @@ export const createWaypointTemplate = (event) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${toISOStringWithoutSecsAndMillisecs(event.startDate)}">${toHoursAndMinutes(event.startDate)}</time>
+            <time class="event__start-time" datetime="${toISODate(event.startDate)}">${toHoursAndMinutes(event.startDate)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${toISOStringWithoutSecsAndMillisecs(event.endDate)}">${toHoursAndMinutes(event.endDate)}</time>
+            <time class="event__end-time" datetime="${toISODate(event.endDate)}">${toHoursAndMinutes(event.endDate)}</time>
           </p>
           <p class="event__duration">${durationTime(event.endDate, event.startDate)}</p>
         </div>
