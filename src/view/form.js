@@ -166,11 +166,7 @@ export const createFormTemplate = (event) => {
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              <img class="event__photo" src="${event[getRandomInteger(0, event.length - 1)].photos}" alt="Event photo">
-              <img class="event__photo" src="${event[getRandomInteger(0, event.length - 1)].photos}" alt="Event photo">
-              <img class="event__photo" src="${event[getRandomInteger(0, event.length - 1)].photos}" alt="Event photo">
-              <img class="event__photo" src="${event[getRandomInteger(0, event.length - 1)].photos}" alt="Event photo">
-              <img class="event__photo" src="${event[getRandomInteger(0, event.length - 1)].photos}" alt="Event photo">
+              ${event[getRandomInteger(0, event.length - 1)].photos.map((src) => `<img class="event__photo" src="${src}"/>`).join(``)}
             </div>
           </div>
         </section>

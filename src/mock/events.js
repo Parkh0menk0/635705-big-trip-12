@@ -37,7 +37,7 @@ const generateDate = () => {
   return (Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * getRandomInteger(0, 60) * 60 * 1000);
 };
 
-const generatePhoto = () => `http://picsum.photos/248/152?r=${Math.random()}`;
+const generatePhoto = () => [`http://picsum.photos/248/152?r=${Math.random()}`];
 
 const generateEvent = () => {
   const startDate = generateDate();
