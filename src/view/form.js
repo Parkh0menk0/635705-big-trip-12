@@ -1,5 +1,3 @@
-import {getRandomInteger} from "./../utils.js";
-
 export const createFormTemplate = (event) => {
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
