@@ -15,7 +15,7 @@ import {events} from "./mock/events.js";
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
 
-render(tripMain, createRouteInfoTemplate(events), `afterbegin`);
+render(tripMain, createRouteInfoTemplate(), `afterbegin`);
 
 const tripInfo = header.querySelector(`.trip-info`);
 
@@ -29,7 +29,7 @@ render(tripControls, createFilterTemplate());
 const tripEvents = document.querySelector(`.trip-events`);
 
 render(tripEvents, createSortTemplate());
-render(tripEvents, createFormTemplate(events));
+render(tripEvents, createFormTemplate(events[0]));
 render(tripEvents, createDayListTemplate());
 
 const tripDays = tripEvents.querySelector(`.trip-days`);
