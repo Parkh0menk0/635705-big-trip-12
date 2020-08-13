@@ -1,6 +1,6 @@
 "use strict";
 
-import {render, create} from "./utils.js";
+import {renderTemplate, createElement} from "./utils.js";
 import {createSiteMenuTemplate} from "./view/site-menu.js";
 import {createFilterTemplate} from "./view/filter.js";
 import {createSortTemplate} from "./view/sort.js";
@@ -15,37 +15,37 @@ import {events} from "./mock/events.js";
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
 
-render(tripMain, createRouteInfoTemplate(), `afterbegin`);
+renderTemplate(tripMain, createRouteInfoTemplate(), `afterbegin`);
 
 const tripInfo = header.querySelector(`.trip-info`);
 
-render(tripInfo, createTripСostTemplate());
+renderTemplate(tripInfo, createTripСostTemplate());
 
 const tripControls = tripMain.querySelector(`.trip-controls`);
 
-render(tripControls, createSiteMenuTemplate(), `afterbegin`);
-render(tripControls, createFilterTemplate());
+renderTemplate(tripControls, createSiteMenuTemplate(), `afterbegin`);
+renderTemplate(tripControls, createFilterTemplate());
 
 const tripEvents = document.querySelector(`.trip-events`);
 
-render(tripEvents, createSortTemplate());
-render(tripEvents, createFormTemplate(events[0]));
-render(tripEvents, createDayListTemplate());
+renderTemplate(tripEvents, createSortTemplate());
+renderTemplate(tripEvents, createFormTemplate(events[0]));
+renderTemplate(tripEvents, createDayListTemplate());
 
 const tripDays = tripEvents.querySelector(`.trip-days`);
 
 const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))];
 
 dates.forEach((date, dateIndex) => {
-  const day = create(createDayTemplate(new Date(date), dateIndex + 1));
+  const day = createElement(createDayTemplate(new Date(date), dateIndex + 1));
 
   events
     .filter((_event) => new Date(_event.startDate.toDateString === date))
     .forEach((_event) => {
-      render(day.querySelector(`.trip-events__list`), createWaypointTemplate(_event));
+      renderTemplate(day.querySelector(`.trip-events__list`), createWaypointTemplate(_event));
     });
 
-  render(tripDays, day.parentElement.innerHTML);
+  renderTemplate(tripDays, day.parentElement.innerHTML);
 });
 
 const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
