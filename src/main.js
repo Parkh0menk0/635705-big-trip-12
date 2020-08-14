@@ -3,7 +3,6 @@
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
 import SortView from "./view/sort.js";
-import FormView from "./view/form.js";
 import WaypointView from "./view/waypoint.js";
 import RouteInfoView from "./view/route-info.js";
 import DayListView from "./view/day-list.js";
@@ -29,7 +28,6 @@ render(tripControls, new FilterView().getElement());
 const tripEvents = document.querySelector(`.trip-events`);
 
 render(tripEvents, new SortView().getElement());
-render(tripEvents, new FormView(events[0]).getElement());
 render(tripEvents, new DayListView().getElement());
 
 const tripDays = tripEvents.querySelector(`.trip-days`);
