@@ -1,51 +1,51 @@
 "use strict";
 
-import {renderTemplate, createElement} from "./utils.js";
-import {createSiteMenuTemplate} from "./view/site-menu.js";
-import {createFilterTemplate} from "./view/filter.js";
-import {createSortTemplate} from "./view/sort.js";
-import {createFormTemplate} from "./view/form.js";
-import {createWaypointTemplate} from "./view/waypoint.js";
-import {createRouteInfoTemplate} from "./view/route-info.js";
-import {createDayListTemplate} from "./view/day-list.js";
-import {createDayTemplate} from "./view/day.js";
-import {createTripСostTemplate} from "./view/trip-cost.js";
+import SiteMenuView from "./view/site-menu.js";
+import FilterView from "./view/filter.js";
+import SortView from "./view/sort.js";
+import FormView from "./view/form.js";
+import WaypointView from "./view/waypoint.js";
+import RouteInfoView from "./view/route-info.js";
+import DayListView from "./view/day-list.js";
+import DayView from "./view/day.js";
+import TripСostView from "./view/trip-cost.js";
+import {render, RenderPosition} from "./utils.js";
 import {events} from "./mock/events.js";
 
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
 
-renderTemplate(tripMain, createRouteInfoTemplate(), `afterbegin`);
+render(tripMain, new RouteInfoView().getElement(), RenderPosition.AFTERBEGIN);
 
 const tripInfo = header.querySelector(`.trip-info`);
 
-renderTemplate(tripInfo, createTripСostTemplate());
+render(tripInfo, new TripСostView().getElement());
 
 const tripControls = tripMain.querySelector(`.trip-controls`);
 
-renderTemplate(tripControls, createSiteMenuTemplate(), `afterbegin`);
-renderTemplate(tripControls, createFilterTemplate());
+render(tripControls, new SiteMenuView().getElement(), RenderPosition.AFTERBEGIN);
+render(tripControls, new FilterView().getElement());
 
 const tripEvents = document.querySelector(`.trip-events`);
 
-renderTemplate(tripEvents, createSortTemplate());
-renderTemplate(tripEvents, createFormTemplate(events[0]));
-renderTemplate(tripEvents, createDayListTemplate());
+render(tripEvents, new SortView().getElement());
+render(tripEvents, new FormView(events[0]).getElement());
+render(tripEvents, new DayListView().getElement());
 
 const tripDays = tripEvents.querySelector(`.trip-days`);
 
 const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))];
 
 dates.forEach((date, dateIndex) => {
-  const day = createElement(createDayTemplate(new Date(date), dateIndex + 1));
+  const day = new DayView(new Date(date), dateIndex + 1).getElement();
 
   events
     .filter((_event) => new Date(_event.startDate.toDateString === date))
     .forEach((_event) => {
-      renderTemplate(day.querySelector(`.trip-events__list`), createWaypointTemplate(_event));
+      render(day.querySelector(`.trip-events__list`), new WaypointView(_event).getElement());
     });
 
-  renderTemplate(tripDays, day.parentElement.innerHTML);
+  render(tripDays, day.parentElement);
 });
 
 const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
