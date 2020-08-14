@@ -1,6 +1,7 @@
 import {toISODate, toHoursAndMinutes, durationTime} from "./../utils.js";
+import {createElement} from "../utils.js";
 
-export const createWaypointTemplate = (event) => {
+const createWaypointTemplate = (event) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -34,3 +35,26 @@ export const createWaypointTemplate = (event) => {
     </li>`
   );
 };
+
+export default class SiteMenu {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createWaypointTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

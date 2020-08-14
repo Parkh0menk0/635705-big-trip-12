@@ -1,6 +1,7 @@
 import {toYyyyMmDd, toLocaleDate} from "./../utils.js";
+import {createElement} from "../utils.js";
 
-export const createDayTemplate = (date, count) => {
+const createDayTemplate = (date, count) => {
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
@@ -14,3 +15,27 @@ export const createDayTemplate = (date, count) => {
     </li>`
   );
 };
+
+export default class Day {
+  constructor(date, count) {
+    this._date = date;
+    this._count = count;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createDayTemplate(this._date, this._count);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
