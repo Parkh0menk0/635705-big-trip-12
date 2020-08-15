@@ -3,6 +3,7 @@
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
 import SortView from "./view/sort.js";
+import FormView from "./view/form.js";
 import WaypointView from "./view/waypoint.js";
 import RouteInfoView from "./view/route-info.js";
 import DayListView from "./view/day-list.js";
@@ -32,6 +33,30 @@ render(tripEvents, new DayListView().getElement());
 
 const tripDays = tripEvents.querySelector(`.trip-days`);
 
+const renderTask = (taskListElement, task) => {
+  const taskComponent = new WaypointView(task);
+  const taskEditComponent = new FormView(task);
+
+  const replaceCardToForm = () => {
+    taskListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+  };
+
+  const replaceFormToCard = () => {
+    taskListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+  };
+
+  taskComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceCardToForm();
+  });
+
+  taskEditComponent.getElement().querySelector(`.event__save-btn`).addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+  });
+
+  render(taskListElement, taskComponent.getElement());
+};
+
 const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))];
 
 dates.forEach((date, dateIndex) => {
@@ -40,7 +65,7 @@ dates.forEach((date, dateIndex) => {
   events
     .filter((_event) => new Date(_event.startDate.toDateString === date))
     .forEach((_event) => {
-      render(day.querySelector(`.trip-events__list`), new WaypointView(_event).getElement());
+      renderTask(day.querySelector(`.trip-events__list`), _event);
     });
 
   render(tripDays, day.parentElement);

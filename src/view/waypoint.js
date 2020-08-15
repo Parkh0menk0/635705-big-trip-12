@@ -25,7 +25,13 @@ const createWaypointTemplate = (event) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${event.offers.map((offer) => `<li class="event__offer"><span class="event__offer-title">${offer.title}</span>&plus;&euro;&nbsp;<span class="event__offer-price">${offer.cost}</span></li>`).slice(0, 3).join(``)}
+          ${event.offers.map((offer) => (`
+            <li class="event__offer">
+              <span class="event__offer-title">${offer.title}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">${offer.cost}</span>
+            </li>
+          `)).slice(0, 3).join(``)}
         </ul>
 
         <button class="event__rollup-btn" type="button">
