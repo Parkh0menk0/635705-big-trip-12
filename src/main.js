@@ -12,6 +12,8 @@ import TripСostView from "./view/trip-cost.js";
 import {render, RenderPosition} from "./utils.js";
 import {events} from "./mock/events.js";
 
+const ESC_KEY = `Escape`;
+
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
 
@@ -47,13 +49,23 @@ const renderTask = (taskListElement, event) => {
     eventComponent.replaceChild(_event, _form);
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   eventComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceCardToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   _form.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(taskListElement, eventComponent);
