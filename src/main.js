@@ -9,7 +9,7 @@ import RouteInfoView from "./view/route-info.js";
 import DayListView from "./view/day-list.js";
 import DayView from "./view/day.js";
 import TripСostView from "./view/trip-cost.js";
-import {render, RenderPosition} from "./utils.js";
+import {render, createElement, RenderPosition} from "./utils.js";
 import {events} from "./mock/events.js";
 
 const header = document.querySelector(`.page-header`);
@@ -34,27 +34,29 @@ render(tripEvents, new DayListView().getElement());
 const tripDays = tripEvents.querySelector(`.trip-days`);
 
 const renderTask = (taskListElement, task) => {
-  const taskComponent = new WaypointView(task);
+  const taskComponent = new WaypointView(task).getElement();
   const taskEditComponent = new FormView(task);
+  const event = taskComponent.querySelector(`.event`);
+  const form = taskEditComponent.getElement();
 
   const replaceCardToForm = () => {
-    taskListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+    taskListElement.replaceChild(form, event);
   };
 
   const replaceFormToCard = () => {
-    taskListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+    taskListElement.replaceChild(event, form);
   };
 
-  taskComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  taskComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceCardToForm();
   });
 
-  taskEditComponent.getElement().querySelector(`.event__save-btn`).addEventListener(`submit`, (evt) => {
+  form.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
   });
 
-  render(taskListElement, taskComponent.getElement());
+  render(taskListElement, taskComponent);
 };
 
 const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))];
