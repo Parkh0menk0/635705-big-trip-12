@@ -1,6 +1,7 @@
-import {toISODate, toHoursAndMinutes, durationTime} from "./../utils.js";
+import {toISODate, toHoursAndMinutes, durationTime} from "../utils.js";
+import {createElement} from "../utils.js";
 
-export const createWaypointTemplate = (event) => {
+const createPoinTemplate = (event) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -24,7 +25,13 @@ export const createWaypointTemplate = (event) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${event.offers.map((offer) => `<li class="event__offer"><span class="event__offer-title">${offer.title}</span>&plus;&euro;&nbsp;<span class="event__offer-price">${offer.cost}</span></li>`).slice(0, 3).join(``)}
+          ${event.offers.map((offer) => (`
+            <li class="event__offer">
+              <span class="event__offer-title">${offer.title}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">${offer.cost}</span>
+            </li>
+          `)).slice(0, 3).join(``)}
         </ul>
 
         <button class="event__rollup-btn" type="button">
@@ -34,3 +41,26 @@ export const createWaypointTemplate = (event) => {
     </li>`
   );
 };
+
+export default class SiteMenu {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPoinTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

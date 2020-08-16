@@ -2,15 +2,27 @@ const DAY_IN_MS = 24 * 3600 * 1000;
 const HOUR_IN_MS = 3600 * 1000;
 const MINUTE_IN_MS = 60 * 1000;
 
-export const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
 };
 
-export const create = (template) => {
-  var div = document.createElement('div');
-  div.innerHTML = template.trim();
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
 
-  return div.firstChild;
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
 };
 
 export const getRandomInteger = (a = 0, b = 1) => {
@@ -29,17 +41,24 @@ export const shuffleArray = (arr) => {
 };
 
 export const toYyyyMmDd = (date) => {
-  return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}`;
+  return `${date.getFullYear()}-${(`0` + (date.getMonth() + 1)).slice(-2)}-${(`0` + date.getDate()).slice(-2)}`;
+};
+
+export const toDdMmYy = (date) => {
+  return `${(`0` + date.getDate()).slice(-2)}/${(`0` + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear().slice(-2)}`;
 };
 
 export const toLocaleDate = (date) => {
-  return date.toLocaleString('en-US', {month: 'short', day: `2-digit`}).toUpperCase();
+  return date.toLocaleString(`en-US`, {
+    month: `short`,
+    day: `2-digit`
+  }).toUpperCase();
 };
 
 export const toISODate = (date) => {
   const dStr = new Date(date).toISOString();
 
-  return dStr.substring(0, dStr.indexOf(':', dStr.indexOf(':') + 1))
+  return dStr.substring(0, dStr.indexOf(`:`, dStr.indexOf(`:`) + 1))
 };
 
 export const toHoursAndMinutes = (date) => {
