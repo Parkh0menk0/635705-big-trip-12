@@ -44,6 +44,10 @@ export const toYyyyMmDd = (date) => {
   return `${date.getFullYear()}-${(`0` + (date.getMonth() + 1)).slice(-2)}-${(`0` + date.getDate()).slice(-2)}`;
 };
 
+export const toDdMmYy = (date) => {
+  return `${(`0` + date.getDate()).slice(-2)}/${(`0` + (date.getMonth() + 1)).slice(-2)}/${date.getFullYear().slice(-2)}`;
+};
+
 export const toLocaleDate = (date) => {
   return date.toLocaleString(`en-US`, {
     month: `short`,

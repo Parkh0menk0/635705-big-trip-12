@@ -40,11 +40,11 @@ const renderTask = (taskListElement, task) => {
   const form = taskEditComponent.getElement();
 
   const replaceCardToForm = () => {
-    taskListElement.replaceChild(form, event);
+    taskComponent.replaceChild(form, event);
   };
 
   const replaceFormToCard = () => {
-    taskListElement.replaceChild(event, form);
+    taskComponent.replaceChild(event, form);
   };
 
   taskComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
