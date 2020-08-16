@@ -1,7 +1,7 @@
-import {toISODate, toHoursAndMinutes, durationTime} from "./../utils.js";
+import {toISODate, toHoursAndMinutes, durationTime} from "../utils.js";
 import {createElement} from "../utils.js";
 
-const createWaypointTemplate = (event) => {
+const createPoinTemplate = (event) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -49,7 +49,7 @@ export default class SiteMenu {
   }
 
   getTemplate() {
-    return createWaypointTemplate(this._event);
+    return createPoinTemplate(this._event);
   }
 
   getElement() {

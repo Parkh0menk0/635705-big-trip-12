@@ -1,6 +1,6 @@
 import {createElement, toHoursAndMinutes} from "../utils.js";
 
-const createFormTemplate = (event) => {
+const createPointEditTemplate = (event) => {
   return `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
@@ -181,7 +181,7 @@ export default class Form {
   }
 
   getTemplate() {
-    return createFormTemplate(this._event);
+    return createPointEditTemplate(this._event);
   }
 
   getElement() {

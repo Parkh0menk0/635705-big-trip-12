@@ -3,13 +3,13 @@
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
 import SortView from "./view/sort.js";
-import FormView from "./view/form.js";
-import WaypointView from "./view/waypoint.js";
+import PointEditView from "./view/point-edit.js";
+import PoinView from "./view/poin.js";
 import RouteInfoView from "./view/route-info.js";
 import DayListView from "./view/day-list.js";
 import DayView from "./view/day.js";
 import TripСostView from "./view/trip-cost.js";
-import {render, createElement, RenderPosition} from "./utils.js";
+import {render, RenderPosition} from "./utils.js";
 import {events} from "./mock/events.js";
 
 const header = document.querySelector(`.page-header`);
@@ -33,30 +33,30 @@ render(tripEvents, new DayListView().getElement());
 
 const tripDays = tripEvents.querySelector(`.trip-days`);
 
-const renderTask = (taskListElement, task) => {
-  const taskComponent = new WaypointView(task).getElement();
-  const taskEditComponent = new FormView(task);
-  const event = taskComponent.querySelector(`.event`);
-  const form = taskEditComponent.getElement();
+const renderTask = (taskListElement, event) => {
+  const eventComponent = new PoinView(event).getElement();
+  const eventEditComponent = new PointEditView(event);
+  const _event = eventComponent.querySelector(`.event`);
+  const _form = eventEditComponent.getElement();
 
   const replaceCardToForm = () => {
-    taskComponent.replaceChild(form, event);
+    eventComponent.replaceChild(_form, _event);
   };
 
   const replaceFormToCard = () => {
-    taskComponent.replaceChild(event, form);
+    eventComponent.replaceChild(_event, _form);
   };
 
-  taskComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceCardToForm();
   });
 
-  form.addEventListener(`submit`, (evt) => {
+  _form.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
   });
 
-  render(taskListElement, taskComponent);
+  render(taskListElement, eventComponent);
 };
 
 const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))];
