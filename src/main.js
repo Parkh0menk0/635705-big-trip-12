@@ -9,8 +9,11 @@ import RouteInfoView from "./view/route-info.js";
 import DayListView from "./view/day-list.js";
 import DayView from "./view/day.js";
 import TripСostView from "./view/trip-cost.js";
+import NoPointsView from "./view/no-points.js";
 import {render, RenderPosition} from "./utils.js";
 import {events} from "./mock/events.js";
+
+const ESC_KEY = `Escape`;
 
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
@@ -28,11 +31,6 @@ render(tripControls, new FilterView().getElement());
 
 const tripEvents = document.querySelector(`.trip-events`);
 
-render(tripEvents, new SortView().getElement());
-render(tripEvents, new DayListView().getElement());
-
-const tripDays = tripEvents.querySelector(`.trip-days`);
-
 const renderTask = (taskListElement, event) => {
   const eventComponent = new PoinView(event).getElement();
   const eventEditComponent = new PointEditView(event);
@@ -47,31 +45,55 @@ const renderTask = (taskListElement, event) => {
     eventComponent.replaceChild(_event, _form);
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   eventComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceCardToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   _form.addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToCard();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(taskListElement, eventComponent);
 };
 
-const dates = [...new Set(events.map((item) => new Date(item.startDate).toDateString()))];
+const renderBoard = (boardContainer, boardPoints) => {
+  if (boardPoints == 0) {
+    render(boardContainer, new NoPointsView().getElement());
+    return;
+  } else {
+    const dates = [...new Set(boardPoints.map((item) => new Date(item.startDate).toDateString()))];
 
-dates.forEach((date, dateIndex) => {
-  const day = new DayView(new Date(date), dateIndex + 1).getElement();
+    render(boardContainer, new SortView().getElement());
+    render(boardContainer, new DayListView().getElement());
 
-  events
-    .filter((_event) => new Date(_event.startDate.toDateString === date))
-    .forEach((_event) => {
-      renderTask(day.querySelector(`.trip-events__list`), _event);
+    const tripDays = boardContainer.querySelector(`.trip-days`);
+
+    dates.forEach((date, dateIndex) => {
+      const day = new DayView(new Date(date), dateIndex + 1).getElement();
+
+      boardPoints
+        .filter((point) => new Date(point.startDate.toDateString === date))
+        .forEach((point) => {
+          renderTask(day.querySelector(`.trip-events__list`), point);
+        });
+
+      render(tripDays, day);
     });
+  }
+};
 
-  render(tripDays, day.parentElement);
-});
+renderBoard(tripEvents, events);
 
 const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
 
