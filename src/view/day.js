@@ -1,5 +1,5 @@
 import {toYyyyMmDd, toLocaleDate} from "./../utils.js";
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createDayTemplate = (date, count) => {
   return (
@@ -16,26 +16,15 @@ const createDayTemplate = (date, count) => {
   );
 };
 
-export default class Day {
+export default class Day extends AbstractView {
   constructor(date, count) {
+    super();
     this._date = date;
     this._count = count;
-    this._element = null;
   }
 
   getTemplate() {
     return createDayTemplate(this._date, this._count);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }

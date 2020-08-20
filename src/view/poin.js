@@ -1,5 +1,5 @@
 import {toISODate, toHoursAndMinutes, durationTime} from "../utils.js";
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createPoinTemplate = (event) => {
   return (
@@ -42,25 +42,14 @@ const createPoinTemplate = (event) => {
   );
 };
 
-export default class SiteMenu {
+export default class SiteMenu extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createPoinTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
