@@ -32,17 +32,17 @@ render(tripControls, new FilterView().getElement());
 const tripEvents = document.querySelector(`.trip-events`);
 
 const renderTask = (taskListElement, event) => {
-  const eventComponent = new PoinView(event).getElement();
+  const eventComponent = new PoinView(event);
   const eventEditComponent = new PointEditView(event);
-  const _event = eventComponent.querySelector(`.event`);
+  const _event = eventComponent.getElement().querySelector(`.event`);
   const _form = eventEditComponent.getElement();
 
   const replaceCardToForm = () => {
-    eventComponent.replaceChild(_form, _event);
+    eventComponent.getElement().replaceChild(_form, _event);
   };
 
   const replaceFormToCard = () => {
-    eventComponent.replaceChild(_event, _form);
+    eventComponent.getElement().replaceChild(_event, _form);
   };
 
   const onEscKeyDown = (evt) => {
@@ -53,18 +53,17 @@ const renderTask = (taskListElement, event) => {
     }
   };
 
-  eventComponent.querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.setClickHandler(() => {
     replaceCardToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  _form.addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(taskListElement, eventComponent);
+  render(taskListElement, eventComponent.getElement());
 };
 
 const renderBoard = (boardContainer, boardPoints) => {
