@@ -1,4 +1,4 @@
-import {getRandomInteger, shuffleArray} from "../utils.js";
+import {getRandomInteger, shuffleArray} from "../utils/common.js";
 
 const EVENTS_AMOUNT = 20;
 

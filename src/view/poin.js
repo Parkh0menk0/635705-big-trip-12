@@ -1,4 +1,4 @@
-import {toISODate, toHoursAndMinutes, durationTime} from "../utils.js";
+import {toISODate, toHoursAndMinutes, durationTime} from "./../utils/task.js";
 import AbstractView from "./abstract.js";
 
 const createPoinTemplate = (event) => {

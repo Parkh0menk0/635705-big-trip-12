@@ -1,4 +1,4 @@
-import {toHoursAndMinutes} from "../utils.js";
+import {toHoursAndMinutes} from "../utils/task.js";
 import AbstractView from "./abstract.js";
 
 const createPointEditTemplate = (event) => {

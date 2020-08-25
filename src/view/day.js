@@ -1,4 +1,4 @@
-import {toYyyyMmDd, toLocaleDate} from "./../utils.js";
+import {toYyyyMmDd, toLocaleDate} from "./../utils/task.js";
 import AbstractView from "./abstract.js";
 
 const createDayTemplate = (date, count) => {
