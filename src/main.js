@@ -10,7 +10,7 @@ import DayListView from "./view/day-list.js";
 import DayView from "./view/day.js";
 import TripСostView from "./view/trip-cost.js";
 import NoPointsView from "./view/no-points.js";
-import {render, RenderPosition, replace, remove, createElement} from "./utils/render.js";
+import {render, RenderPosition} from "./utils/render.js";
 import {events} from "./mock/events.js";
 
 const ESC_KEY = `Escape`;
@@ -34,13 +34,15 @@ const tripEvents = document.querySelector(`.trip-events`);
 const renderTask = (taskListElement, event) => {
   const eventComponent = new PoinView(event);
   const eventEditComponent = new PointEditView(event);
+  const _event = eventComponent.getElement().querySelector(`.event`);
+  const _form = eventEditComponent.getElement();
 
   const replaceCardToForm = () => {
-    replace(eventEditComponent, eventComponent);
+    eventComponent.getElement().replaceChild(_form, _event);
   };
 
   const replaceFormToCard = () => {
-    replace(eventComponent, eventEditComponent);
+    eventComponent.getElement().replaceChild(_event, _form);
   };
 
   const onEscKeyDown = (evt) => {
@@ -83,8 +85,7 @@ const renderBoard = (boardContainer, boardPoints) => {
       boardPoints
         .filter((point) => new Date(point.startDate.toDateString === date))
         .forEach((point) => {
-          render(eventList, createElement(`<li class="trip-events__item"></li>`));
-          renderTask(eventList.querySelector(`.trip-events__item`), point);
+          renderTask(eventList, point);
         });
 
       render(tripDays, day);
