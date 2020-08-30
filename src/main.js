@@ -1,19 +1,12 @@
 "use strict";
 
+import RouteInfoView from "./view/route-info.js";
+import TripСostView from "./view/trip-cost.js";
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
-import SortView from "./view/sort.js";
-import PointEditView from "./view/point-edit.js";
-import PoinView from "./view/poin.js";
-import RouteInfoView from "./view/route-info.js";
-import DayListView from "./view/day-list.js";
-import DayView from "./view/day.js";
-import TripСostView from "./view/trip-cost.js";
-import NoPointsView from "./view/no-points.js";
+import BoardPresenter from "./presenter/board.js";
 import {render, RenderPosition} from "./utils/render.js";
 import {events} from "./mock/events.js";
-
-const ESC_KEY = `Escape`;
 
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
@@ -31,69 +24,9 @@ render(tripControls, new FilterView());
 
 const tripEvents = document.querySelector(`.trip-events`);
 
-const renderTask = (taskListElement, event) => {
-  const eventComponent = new PoinView(event);
-  const eventEditComponent = new PointEditView(event);
-  const _event = eventComponent.getElement().querySelector(`.event`);
-  const _form = eventEditComponent.getElement();
+const boardPresenter = new BoardPresenter(tripEvents);
 
-  const replaceCardToForm = () => {
-    eventComponent.getElement().replaceChild(_form, _event);
-  };
-
-  const replaceFormToCard = () => {
-    eventComponent.getElement().replaceChild(_event, _form);
-  };
-
-  const onEscKeyDown = (evt) => {
-    if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
-      evt.preventDefault();
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  eventComponent.setClickHandler(() => {
-    replaceCardToForm();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  eventEditComponent.setFormSubmitHandler(() => {
-    replaceFormToCard();
-    document.removeEventListener(`keydown`, onEscKeyDown);
-  });
-
-  render(taskListElement, eventComponent);
-};
-
-const renderBoard = (boardContainer, boardPoints) => {
-  if (boardPoints == 0) {
-    render(boardContainer, new NoPointsView());
-    return;
-  } else {
-    const dates = [...new Set(boardPoints.map((item) => new Date(item.startDate).toDateString()))];
-
-    render(boardContainer, new SortView());
-    render(boardContainer, new DayListView());
-
-    const tripDays = boardContainer.querySelector(`.trip-days`);
-
-    dates.forEach((date, dateIndex) => {
-      const day = new DayView(new Date(date), dateIndex + 1).getElement();
-      const eventList = day.querySelector(`.trip-events__list`);
-
-      boardPoints
-        .filter((point) => new Date(point.startDate.toDateString === date))
-        .forEach((point) => {
-          renderTask(eventList, point);
-        });
-
-      render(tripDays, day);
-    });
-  }
-};
-
-renderBoard(tripEvents, events);
+boardPresenter.init(events);
 
 const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
 

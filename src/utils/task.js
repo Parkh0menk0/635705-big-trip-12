@@ -20,7 +20,7 @@ export const toLocaleDate = (date) => {
 export const toISODate = (date) => {
   const dStr = new Date(date).toISOString();
 
-  return dStr.substring(0, dStr.indexOf(`:`, dStr.indexOf(`:`) + 1))
+  return dStr.substring(0, dStr.indexOf(`:`, dStr.indexOf(`:`) + 1));
 };
 
 export const toHoursAndMinutes = (date) => {
