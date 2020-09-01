@@ -11,22 +11,22 @@ export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
 
-    this._boardComponent = new DayListView();
+    this._boardListComponent = new DayListView();
     this._sortComponent = new SortView();
     this._noTaskComponent = new NoPointsView();
   }
 
-  init(boardTasks) {
-    this._boardTasks = boardTasks.slice();
+  init(events) {
+    this._events = events.slice();
 
     this._renderSort();
-    render(this._boardContainer, this._boardComponent);
+    render(this._boardContainer, this._boardListComponent);
 
-    if (this._boardTasks.length === 0) {
+    if (this._events.length === 0) {
       this._renderNoTasks();
     }
 
-    this._renderPoints(this._boardTasks, this._boardContainer.querySelector(`.trip-days`));
+    this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
   }
 
   _renderSort() {
