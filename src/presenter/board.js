@@ -24,6 +24,7 @@ export default class Board {
 
     if (this._events.length === 0) {
       this._renderNoPoints();
+      return;
     }
 
     this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
