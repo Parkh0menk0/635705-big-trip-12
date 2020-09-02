@@ -13,7 +13,7 @@ export default class Board {
 
     this._boardListComponent = new DayListView();
     this._sortComponent = new SortView();
-    this._noTaskComponent = new NoPointsView();
+    this._noPointComponent = new NoPointsView();
   }
 
   init(events) {
@@ -23,7 +23,7 @@ export default class Board {
     render(this._boardContainer, this._boardListComponent);
 
     if (this._events.length === 0) {
-      this._renderNoTasks();
+      this._renderNoPoints();
     }
 
     this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
@@ -33,19 +33,19 @@ export default class Board {
     render(this._boardContainer, this._sortComponent);
   }
 
-  _renderNoTasks() {
-    render(this._boardContainer, this._noTaskComponent);
+  _renderNoPoints() {
+    render(this._boardContainer, this._noPointComponent);
   }
 
-  _renderPoints(points, container, isDefaultSorting = true) {
-    const dates = isDefaultSorting ? [...new Set(points.map((item) => new Date(item.startDate).toDateString()))] : [true];
+  _renderPoints(events, container, isDefaultSorting = true) {
+    const dates = isDefaultSorting ? [...new Set(events.map((item) => new Date(item.startDate).toDateString()))] : [true];
 
     dates.forEach((date, dateIndex) => {
       const day = isDefaultSorting ? new DayView(new Date(date), dateIndex + 1) : new DayView();
 
       const dayElement = day.getElement();
 
-      points.filter((point) => {
+      events.filter((point) => {
         return isDefaultSorting ? new Date(point.startDate.toDateString === date) : point;
       }).forEach((point) => {
         const newPoint = new PoinView(point);
