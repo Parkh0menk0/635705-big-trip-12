@@ -1,5 +1,5 @@
-import {toISODate, toHoursAndMinutes, durationTime} from "../utils.js";
-import {createElement} from "../utils.js";
+import {toISODate, toHoursAndMinutes, durationTime} from "./../utils/task.js";
+import AbstractView from "./abstract.js";
 
 const createPoinTemplate = (event) => {
   return (
@@ -42,25 +42,25 @@ const createPoinTemplate = (event) => {
   );
 };
 
-export default class SiteMenu {
+export default class Point extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createPoinTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._clickHandler);
   }
+
 }

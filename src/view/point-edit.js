@@ -1,4 +1,5 @@
-import {createElement, toHoursAndMinutes} from "../utils.js";
+import {toHoursAndMinutes} from "../utils/task.js";
+import AbstractView from "./abstract.js";
 
 const createPointEditTemplate = (event) => {
   return `<form class="event  event--edit" action="#" method="post">
@@ -174,25 +175,25 @@ const createPointEditTemplate = (event) => {
     </form>`;
 };
 
-export default class Form {
+export default class Form extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
     return createPointEditTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
+
 }
