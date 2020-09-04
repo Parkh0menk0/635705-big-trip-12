@@ -42,7 +42,7 @@ export default class Sort extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `label`) {
+    if (evt.target.tagName !== `LABEL`) {
       return;
     }
 

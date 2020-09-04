@@ -6,18 +6,24 @@ import DayView from "../view/day.js";
 import NoPointsView from "../view/no-points.js";
 import {render, replace} from "../utils/render.js";
 import {ESC_KEY} from "../const.js";
+import {sortTime, sortPrice} from "../utils/task.js";
+import {SortType} from "../const.js";
 
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
+    this._currentSortType = SortType.EVENT;
 
     this._boardListComponent = new DayListView();
     this._sortComponent = new SortView();
     this._noPointComponent = new NoPointsView();
+
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(events) {
     this._events = events.slice();
+    this._sourcedBoardEvents = events.slice();
 
     this._renderSort();
     render(this._boardContainer, this._boardListComponent);
@@ -30,8 +36,38 @@ export default class Board {
     this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
   }
 
+  _sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this._events.sort(sortTime);
+        break;
+      case SortType.PRICE:
+        this._events.sort(sortPrice);
+        break;
+      default:
+        this._events = this._sourcedBoardEvents.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _clearPoints() {
+    this._boardContainer.querySelector(`.trip-days`).innerHTML = ``;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortPoints(sortType);
+    this._clearPoints();
+    this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
+  }
+
   _renderSort() {
     render(this._boardContainer, this._sortComponent);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderNoPoints() {
