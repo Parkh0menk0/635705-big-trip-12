@@ -23,7 +23,6 @@ export default class Board {
 
   init(events) {
     this._events = events.slice();
-    this._sourcedBoardEvents = events.slice();
 
     this._renderSort();
     render(this._boardContainer, this._boardListComponent);
@@ -45,7 +44,6 @@ export default class Board {
         this._events.sort(sortPrice);
         break;
       default:
-        this._events = this._sourcedBoardEvents.slice();
     }
 
     this._currentSortType = sortType;
