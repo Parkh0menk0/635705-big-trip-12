@@ -3,6 +3,7 @@ import PointEditView from "../view/point-edit.js";
 import PoinView from "../view/poin.js";
 import DayListView from "../view/day-list.js";
 import DayView from "../view/day.js";
+import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
 import {render, replace} from "../utils/render.js";
 import {ESC_KEY} from "../const.js";
@@ -12,7 +13,8 @@ export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
 
-    this._boardListComponent = new DayListView();
+    this._boardList = new DayListView();
+    this._boardDay = new DayView();
     this._sortComponent = new SortView();
     this._noPointComponent = new NoPointsView();
 
@@ -23,22 +25,28 @@ export default class Board {
     this._events = events.slice();
 
     this._renderSort();
-    render(this._boardContainer, this._boardListComponent);
+    render(this._boardContainer, this._boardList);
 
     if (this._events.length === 0) {
       this._renderNoPoints();
       return;
     }
 
-    this._renderPoints(this._events, this._boardListComponent);
+    this._renderPoints(this._events, this._boardList);
   }
 
-  _sortPoints(sortType) {
+  _clearPoints() {
+    this._boardList.getElement().innerHTML = ``;
+  }
+
+  _handleSortTypeChange(sortType) {
     let sortedPoints = [];
+    let isDefaultSorting = false;
 
     switch (sortType) {
       case SortType.EVENT:
         sortedPoints = this._events.slice();
+        isDefaultSorting = true;
         break;
       case SortType.TIME:
         sortedPoints = this._events.slice().sort((pointA, pointB) => pointB.duration - pointA.duration);
@@ -48,16 +56,9 @@ export default class Board {
         break;
     }
 
-    return sortedPoints;
-  }
-
-  _clearPoints() {
-    this._boardListComponent.getElement().innerHTML = ``;
-  }
-
-  _handleSortTypeChange(sortType) {
     this._clearPoints();
-    this._renderPoints(this._sortPoints(sortType), this._boardListComponent);
+
+    this._renderPoints(sortedPoints, this._boardList, isDefaultSorting);
   }
 
   _renderSort() {
@@ -73,7 +74,7 @@ export default class Board {
     const dates = isDefaultSorting ? [...new Set(events.map((item) => new Date(item.startDate).toDateString()))] : [true];
 
     dates.forEach((date, dateIndex) => {
-      const day = isDefaultSorting ? new DayView(new Date(date), dateIndex + 1) : new DayView();
+      const day = isDefaultSorting ? new DayView(new Date(date), dateIndex + 1) : new SortedDayView();
 
       const dayElement = day.getElement();
 
