@@ -57,11 +57,3 @@ export const durationTime = (timeEnd, timeStart) => {
     return `${stringDays} ${stringHours} ${stringMinutes}`;
   }
 };
-
-export const sortTime = (pointA, pointB) => {
-  return pointB.duration - pointA.duration;
-};
-
-export const sortPrice = (pointA, pointB) => {
-  return pointB.price - pointA.price;
-};

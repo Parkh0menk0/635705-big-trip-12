@@ -6,7 +6,6 @@ import DayView from "../view/day.js";
 import NoPointsView from "../view/no-points.js";
 import {render, replace} from "../utils/render.js";
 import {ESC_KEY} from "../const.js";
-import {sortTime, sortPrice} from "../utils/task.js";
 import {SortType} from "../const.js";
 
 export default class Board {
@@ -36,17 +35,23 @@ export default class Board {
   }
 
   _sortPoints(sortType) {
+    let sortedPoints = [];
+
     switch (sortType) {
+      case SortType.EVENT:
+        sortedPoints = this._events.slice();
+        break;
       case SortType.TIME:
-        this._events.sort(sortTime);
+        sortedPoints = this._events.slice().sort((pointA, pointB) => pointB.duration - pointA.duration);
         break;
       case SortType.PRICE:
-        this._events.sort(sortPrice);
+        sortedPoints = this._events.slice().sort((pointA, pointB) => pointB.price - pointA.price);
         break;
-      default:
     }
 
     this._currentSortType = sortType;
+
+    return sortedPoints;
   }
 
   _clearPoints() {
@@ -58,9 +63,8 @@ export default class Board {
       return;
     }
 
-    this._sortPoints(sortType);
     this._clearPoints();
-    this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
+    this._renderPoints(this._sortPoints(sortType), this._boardContainer.querySelector(`.trip-days`));
   }
 
   _renderSort() {
