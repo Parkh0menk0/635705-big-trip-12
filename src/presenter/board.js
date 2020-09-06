@@ -11,7 +11,6 @@ import {SortType} from "../const.js";
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
-    this._currentSortType = SortType.EVENT;
 
     this._boardListComponent = new DayListView();
     this._sortComponent = new SortView();
@@ -49,8 +48,6 @@ export default class Board {
         break;
     }
 
-    this._currentSortType = sortType;
-
     return sortedPoints;
   }
 
@@ -59,10 +56,6 @@ export default class Board {
   }
 
   _handleSortTypeChange(sortType) {
-    if (this._currentSortType === sortType) {
-      return;
-    }
-
     this._clearPoints();
     this._renderPoints(this._sortPoints(sortType), this._boardContainer.querySelector(`.trip-days`));
   }
