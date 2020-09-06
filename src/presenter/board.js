@@ -30,7 +30,7 @@ export default class Board {
       return;
     }
 
-    this._renderPoints(this._events, this._boardContainer.querySelector(`.trip-days`));
+    this._renderPoints(this._events, this._boardListComponent);
   }
 
   _sortPoints(sortType) {
@@ -52,12 +52,12 @@ export default class Board {
   }
 
   _clearPoints() {
-    this._boardContainer.querySelector(`.trip-days`).innerHTML = ``;
+    this._boardListComponent.getElement().innerHTML = ``;
   }
 
   _handleSortTypeChange(sortType) {
     this._clearPoints();
-    this._renderPoints(this._sortPoints(sortType), this._boardContainer.querySelector(`.trip-days`));
+    this._renderPoints(this._sortPoints(sortType), this._boardListComponent);
   }
 
   _renderSort() {
