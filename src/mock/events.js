@@ -51,7 +51,11 @@ const generateEvent = () => {
     offers: generateOffers(),
     description: generateDescription(),
     photos: generatePhoto(),
-    price: getRandomInteger(10, 100)
+    price: getRandomInteger(10, 100),
+
+    get duration() {
+      return endDate - startDate;
+    }
   };
 };
 
