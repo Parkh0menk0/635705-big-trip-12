@@ -2,6 +2,8 @@ import {getRandomInteger, shuffleArray} from "../utils/common.js";
 
 const EVENTS_AMOUNT = 20;
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generatePoint = () => {
   const points = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeng`, `Restaurant`];
   return points[getRandomInteger(0, points.length - 1)];
@@ -44,6 +46,7 @@ const generateEvent = () => {
   const endDate = generateDate();
 
   return {
+    id: generateId(),
     point: generatePoint(),
     destination: generateDestination(),
     startDate: Math.min(startDate, endDate),

@@ -10,6 +10,7 @@ import {SortType} from "../const.js";
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
+    this._pointPresenter = {};
 
     this._boardList = new DayListView();
     this._boardDay = new DayView();
@@ -34,7 +35,10 @@ export default class Board {
   }
 
   _clearPoints() {
-    this._boardList.getElement().innerHTML = ``;
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._pointPresenter = {};
   }
 
   _handleSortTypeChange(sortType) {
@@ -68,6 +72,12 @@ export default class Board {
     render(this._boardContainer, this._noPointComponent);
   }
 
+  _renderPoint(eventList, event) {
+    const pointPresenter = new PointPresenter(eventList);
+    pointPresenter.init(event);
+    this._pointPresenter[event.id] = pointPresenter;
+  }
+
   _renderPoints(events, container, isDefaultSorting = true) {
     const dates = isDefaultSorting ? [...new Set(events.map((item) => new Date(item.startDate).toDateString()))] : [true];
 
@@ -80,8 +90,7 @@ export default class Board {
         return isDefaultSorting ? new Date(point.startDate.toDateString === date) : point;
       }).forEach((point) => {
         const eventList = dayElement.querySelector(`.trip-events__list`);
-        const pointPresenter = new PointPresenter(eventList);
-        pointPresenter.init(point);
+        this._renderPoint(eventList, point);
       });
 
       render(container, day);
