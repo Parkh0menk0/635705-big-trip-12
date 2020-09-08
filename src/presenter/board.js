@@ -1,12 +1,10 @@
 import SortView from "../view/sort.js";
-import PointEditView from "../view/point-edit.js";
-import PoinView from "../view/poin.js";
 import DayListView from "../view/day-list.js";
 import DayView from "../view/day.js";
 import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
-import {render, replace} from "../utils/render.js";
-import {ESC_KEY} from "../const.js";
+import PointPresenter from "./task.js";
+import {render} from "../utils/render.js";
 import {SortType} from "../const.js";
 
 export default class Board {
@@ -81,38 +79,9 @@ export default class Board {
       events.filter((point) => {
         return isDefaultSorting ? new Date(point.startDate.toDateString === date) : point;
       }).forEach((point) => {
-        const newPoint = new PoinView(point);
-        const editPoint = new PointEditView(point);
-
-        const onEscKeyDown = (evt) => {
-          if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
-            evt.preventDefault();
-            replaceFormToPoint();
-            document.removeEventListener(`keydown`, onEscKeyDown);
-          }
-        };
-
         const eventList = dayElement.querySelector(`.trip-events__list`);
-
-        const replacePointToForm = () => {
-          replace(editPoint, newPoint);
-        };
-
-        const replaceFormToPoint = () => {
-          replace(newPoint, editPoint);
-        };
-
-        newPoint.setClickHandler(() => {
-          replacePointToForm();
-          document.addEventListener(`keydown`, onEscKeyDown);
-        });
-
-        editPoint.setFormSubmitHandler(() => {
-          replaceFormToPoint();
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        });
-
-        render(eventList, newPoint);
+        const pointPresenter = new PointPresenter(eventList);
+        pointPresenter.init(point);
       });
 
       render(container, day);
