@@ -11,7 +11,7 @@ import {SortType} from "../const.js";
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
-    this._pointPresenter = [];
+    this._pointPresenter = Object.create(null);
     this._dayStorage = [];
 
     this._boardList = new DayListView();
@@ -38,9 +38,9 @@ export default class Board {
   }
 
   _clearPoints() {
-    this._pointPresenter.forEach((presenter) => presenter.destroy());
+    Object.values(this._pointPresenter).forEach((presenter) => presenter.destroy());
     this._dayStorage.forEach((day) => remove(day));
-    this._pointPresenter = [];
+    this._pointPresenter = Object.create(null);
     this._dayStorage = [];
   }
 
@@ -86,9 +86,9 @@ export default class Board {
   }
 
   _renderPoint(eventList, event) {
-    const pointPresenter = new PointPresenter(eventList);
+    const pointPresenter = new PointPresenter(eventList, this._handlePointChange);
     pointPresenter.init(event);
-    this._pointPresenter.push(pointPresenter);
+    this._pointPresenter[event.id] = pointPresenter;
   }
 
   _renderPoints(events, container, isDefaultSorting = true) {

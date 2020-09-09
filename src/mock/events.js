@@ -46,6 +46,7 @@ const generateEvent = () => {
   const endDate = generateDate();
 
   return {
+    isFavorite: true,
     id: generateId(),
     point: generatePoint(),
     destination: generateDestination(),

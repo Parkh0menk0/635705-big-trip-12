@@ -4,13 +4,15 @@ import {render, replace, remove} from "../utils/render.js";
 import {ESC_KEY} from "../const.js";
 
 export default class Point {
-  constructor(pointListContainer) {
+  constructor(pointListContainer, changeData) {
     this._pointListContainer = pointListContainer;
+    this._changeData = changeData;
 
     this._pointComponent = null;
     this._pointEditComponent = null;
 
-    this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleClick = this._handleClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
@@ -24,7 +26,8 @@ export default class Point {
     this._pointComponent = new PoinView(point);
     this._pointEditComponent = new PointEditView(point);
 
-    this._pointComponent.setClickHandler(this._handleEditClick);
+    this._pointComponent.setClickHandler(this._handleClick);
+    this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -32,11 +35,11 @@ export default class Point {
       return;
     }
 
-    if (this._pointListContainer.getElement().contains(prevPointComponent.getElement())) {
+    if (this._pointListContainer.contains(prevPointComponent.getElement())) {
       replace(this._pointComponent, prevPointComponent);
     }
 
-    if (this._pointListContainer.getElement().contains(prevPointEditComponent.getElement())) {
+    if (this._pointListContainer.contains(prevPointEditComponent.getElement())) {
       replace(this._pointEditComponent, prevPointEditComponent);
     }
 
@@ -66,11 +69,24 @@ export default class Point {
     }
   }
 
-  _handleEditClick() {
+  _handleClick() {
     this._replacePointToForm();
   }
 
-  _handleFormSubmit() {
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._point,
+            {
+              isFavorite: !this._point.isFavorite
+            }
+        )
+    );
+  }
+
+  _handleFormSubmit(point) {
+    this._changeData(point);
     this._replaceFormToPoint();
   }
 }
