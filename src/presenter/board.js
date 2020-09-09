@@ -4,6 +4,7 @@ import DayView from "../view/day.js";
 import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
 import PointPresenter from "./task.js";
+import {updateItem} from "../utils/common.js";
 import {render, remove} from "../utils/render.js";
 import {SortType} from "../const.js";
 
@@ -18,6 +19,7 @@ export default class Board {
     this._sortComponent = new SortView();
     this._noPointComponent = new NoPointsView();
 
+    this._handlePointChange = this._handlePointChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -62,6 +64,11 @@ export default class Board {
     this._clearPoints();
 
     this._renderPoints(sortedPoints, this._boardList, isDefaultSorting);
+  }
+
+  _handlePointChange(updatedPoint) {
+    this._events = updateItem(this._events, updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint);
   }
 
   _renderSort() {
