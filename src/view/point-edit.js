@@ -1,3 +1,4 @@
+import {generateOffers} from "../mock/events.js";
 import {toHoursAndMinutes} from "../utils/task.js";
 import AbstractView from "./abstract.js";
 
@@ -170,12 +171,23 @@ export default class Form extends AbstractView {
   constructor(event) {
     super();
     this._data = Form.parseEventToData(event);
+    this._callback = {};
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._setInnerHandlers();
   }
 
   getTemplate() {
     return createPointEditTemplate(this._data);
+  }
+
+  _eventTypeChangeHandler(evt) {
+    this.updateData({
+      point: evt.target.value,
+      destination: null,
+      offers: generateOffers(false),
+    });
   }
 
   _favoriteClickHandler(evt) {
@@ -188,6 +200,20 @@ export default class Form extends AbstractView {
     this._callback.submit(Form.parseDataToEvent(this._data));
   }
 
+  _setInnerHandlers() {
+    this.getElement()
+    .querySelectorAll(`.event__type-group`)
+    .forEach((eventTypeGroup) => {
+      eventTypeGroup.addEventListener(`change`, this._eventTypeChangeHandler);
+    });
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setSubmitHandler(this._callback.submit);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+  }
+
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
@@ -196,6 +222,30 @@ export default class Form extends AbstractView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
+
+    this.restoreHandlers();
+  }
+
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+    this.updateElement();
   }
 
   static parseEventToData(event) {

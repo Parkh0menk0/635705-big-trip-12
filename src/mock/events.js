@@ -17,7 +17,7 @@ const generateDestination = () => {
   return cities[getRandomInteger(0, cities.length - 1)];
 };
 
-const generateOffers = () => {
+export const generateOffers = (hasChosenOffers = true) => {
   const countOffers = getRandomInteger(0, 5);
   const titles = [`Order Uber`, `Add luggage`, `Rent a car`, `Add breakfast`, `Book tickets`, `Lunch in city`, `Switch to comfort`];
   const offers = new Array(countOffers).fill().map((item) => {
@@ -26,7 +26,7 @@ const generateOffers = () => {
       title: titles[i],
       type: titles[i].split(` `).slice(-1).join().toLowerCase(),
       cost: getRandomInteger(5, 100),
-      isChecked: Boolean(getRandomInteger(0, 1))
+      isChecked: hasChosenOffers ? Boolean(getRandomInteger(0, 1)) : false
     };
     return item;
   });
