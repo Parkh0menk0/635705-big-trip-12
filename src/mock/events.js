@@ -27,7 +27,7 @@ const generateOffers = () => {
       type: titles[i].split(` `).slice(-1).join().toLowerCase(),
       cost: getRandomInteger(5, 100),
       isChecked: Boolean(getRandomInteger(0, 1))
-    }
+    };
     return item;
   });
 
