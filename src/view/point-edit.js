@@ -1,6 +1,6 @@
 import {generateOffers, generateDescription, generatePhoto} from "../mock/events.js";
 import {toHoursAndMinutes} from "../utils/task.js";
-import AbstractView from "./abstract.js";
+import SmartView from "./smart.js";
 import {cities} from "../const.js";
 
 const createDestinationListTemplate = (destinations) => {
@@ -192,7 +192,7 @@ const createPointEditTemplate = (data) => {
     </form>`;
 };
 
-export default class Form extends AbstractView {
+export default class Form extends SmartView {
   constructor(event) {
     super();
     this._data = Form.parseEventToData(event);
@@ -268,30 +268,6 @@ export default class Form extends AbstractView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
-  }
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null;
-
-    this.restoreHandlers();
-  }
-
-  updateData(update) {
-    if (!update) {
-      return;
-    }
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-    this.updateElement();
   }
 
   static parseEventToData(event) {
