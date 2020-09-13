@@ -260,7 +260,7 @@ export default class Form extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
-    this.setSubmitHandler(this._callback.submit);
+    this.setSubmitHandler(this._callback.formSubmit);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
