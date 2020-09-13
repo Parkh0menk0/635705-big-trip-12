@@ -21,6 +21,7 @@ export default class Board {
 
     this._handlePointChange = this._handlePointChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(events) {
@@ -71,6 +72,12 @@ export default class Board {
     this._pointPresenter[updatedPoint.id].init(updatedPoint);
   }
 
+  _handleModeChange() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
   _renderSort() {
     render(this._boardContainer, this._sortComponent);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
@@ -86,7 +93,7 @@ export default class Board {
   }
 
   _renderPoint(eventList, event) {
-    const pointPresenter = new PointPresenter(eventList, this._handlePointChange);
+    const pointPresenter = new PointPresenter(eventList, this._handlePointChange, this._handleModeChange);
     pointPresenter.init(event);
     this._pointPresenter[event.id] = pointPresenter;
   }
