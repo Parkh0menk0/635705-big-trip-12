@@ -243,7 +243,7 @@ export default class Form extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.submit(Form.parseDataToEvent(this._data));
+    this._callback.formSubmit(Form.parseDataToEvent(this._data));
   }
 
   _setInnerHandlers() {
