@@ -1,6 +1,33 @@
 import {generateOffers, generateDescription, generatePhoto} from "../mock/events.js";
 import {toHoursAndMinutes} from "../utils/task.js";
 import AbstractView from "./abstract.js";
+import {cities} from "../const.js";
+
+const createDestinationListTemplate = (destinations) => {
+  return `<datalist id="destination-list-1">
+    ${destinations.map((destination) => `<option value="${destination}"></option>`).join(`\n`)}
+  </datalist>`;
+};
+
+const createDestinationTemplate = (description, photos) => {
+  if (description === null && photos === null) {
+    return ``;
+  }
+  const photosTemplate = photos
+  .map((photo) => {
+    return `<img class="event__photo" src="${photo}" alt="Event photo"></img>`;
+  })
+  .join(`\n`);
+  return `<section class="event__section  event__section--destination">
+            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            <p class="event__destination-description">${description}</p>
+            <div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${photosTemplate}
+              </div>
+            </div>
+          </section>`;
+};
 
 const createOfferTemplate = (offer) => {
   if (!offer) {
@@ -31,15 +58,18 @@ const createOffersTemplate = (offers) => {
   if (offers.length === 0) {
     return ``;
   }
-  return `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-            ${offers.map(createOfferTemplate).join(`\n`)}
-         </div>`;
+
+  return `<section class="event__section  event__section--offers">
+            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+            <div class="event__available-offers">
+              ${offers.map(createOfferTemplate).join(`\n`)}
+            </div>
+          </section>`;
 };
 
 const createPointEditTemplate = (data) => {
 
-  const {isFavoriteChecked, point, destination, startDate, endDate, offers, price} = data;
+  const {isFavoriteChecked, point, destination, startDate, endDate, offers, price, description, photos} = data;
 
   return `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -116,11 +146,7 @@ const createPointEditTemplate = (data) => {
             ${point}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
-          <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-          </datalist>
+          ${createDestinationListTemplate(cities)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -160,9 +186,8 @@ const createPointEditTemplate = (data) => {
       </header>
 
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          ${createOffersTemplate(offers)}
-        </section>
+        ${createOffersTemplate(offers)}
+        ${createDestinationTemplate(description, photos)}
       </section>
     </form>`;
 };
@@ -197,11 +222,19 @@ export default class Form extends AbstractView {
   }
 
   _destinationChoseHandler(evt) {
-    this.updateData({
-      destination: evt.target.value,
+    const userDestination = evt.target.value;
+    const update = {
       description: generateDescription(),
       photos: generatePhoto()
-    });
+    };
+
+    if (this._data.destination.some((destination) => destination === userDestination)) {
+      update.destination = userDestination;
+    } else {
+      update.destination = ``;
+    }
+
+    this.updateData(update);
   }
 
   _formSubmitHandler(evt) {
@@ -216,7 +249,7 @@ export default class Form extends AbstractView {
       eventTypeGroup.addEventListener(`change`, this._eventTypeChangeHandler);
     });
 
-  this.getElement()
+    this.getElement()
     .querySelector(`.event__input--destination`)
     .addEventListener(`change`, this._destinationChoseHandler);
   }

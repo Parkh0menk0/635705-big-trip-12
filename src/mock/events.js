@@ -1,4 +1,5 @@
 import {getRandomInteger, shuffleArray} from "../utils/common.js";
+import {cities} from "../const.js";
 
 const EVENTS_AMOUNT = 20;
 
@@ -10,10 +11,6 @@ const generatePoint = () => {
 };
 
 const generateDestination = () => {
-  const cities = [`Andorra la Vella`, `Athens`, `Belgrade`, `Berlin`, `Bern`, `Bratislava`, `Brussels`, `Bucharest`, `Budapest`,
-    `Chisinau`, `Copenhagen`, `Dublin`, `Helsinki`, `Kiev`, `Lisbon`, `Ljubljana`, `London`, `Luxembourg`, `Madrid`, `Minsk`, `Monaco`,
-    `Moscow`, `Nicosia`, `Nuuk`, `Oslo`, `Paris`, `Podgorica`, `Prague`, `Reykjavik`, `Riga`, `Rome`, `San Marino`, `Sarajevo`,
-    `Skopje`, `Sofia`, `Stockholm`, `Tallinn`, `Tirana`, `Vaduz`, `Valletta`, `Vatican City`, `Vienna`, `Vilnius`, `Warsaw`, `Zagreb`];
   return cities[getRandomInteger(0, cities.length - 1)];
 };
 
