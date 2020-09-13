@@ -208,6 +208,10 @@ export default class Form extends SmartView {
     return createPointEditTemplate(this._data);
   }
 
+  reset(event) {
+    this.updateData(Form.parseEventToData(event));
+  }
+
   _eventTypeChangeHandler(evt) {
     this.updateData({
       point: evt.target.value,

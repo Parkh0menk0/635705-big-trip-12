@@ -81,6 +81,7 @@ export default class Point {
   _escKeyDownHandler(evt) {
     if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
       evt.preventDefault();
+      this._pointEditComponent.reset(this._point);
       this._replaceFormToPoint();
     }
   }
