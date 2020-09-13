@@ -209,11 +209,11 @@ export default class Form extends SmartView {
   }
 
   reset(event) {
-    this.updateData(Form.parseEventToData(event));
+    updateData(Form.parseEventToData(event));
   }
 
   _eventTypeChangeHandler(evt) {
-    this.updateData({
+    updateData({
       point: evt.target.value,
       destination: null,
       offers: generateOffers(false),
@@ -238,7 +238,7 @@ export default class Form extends SmartView {
       update.destination = ``;
     }
 
-    this.updateData(update);
+    updateData(update);
   }
 
   _formSubmitHandler(evt) {
