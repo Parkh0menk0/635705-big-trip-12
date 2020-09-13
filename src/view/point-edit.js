@@ -1,4 +1,4 @@
-import {generateOffers} from "../mock/events.js";
+import {generateOffers, generateDescription, generatePhoto} from "../mock/events.js";
 import {toHoursAndMinutes} from "../utils/task.js";
 import AbstractView from "./abstract.js";
 
@@ -175,6 +175,7 @@ export default class Form extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
+    this._destinationChoseHandler = this._destinationChoseHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -195,6 +196,14 @@ export default class Form extends AbstractView {
     this._callback.favoriteClick();
   }
 
+  _destinationChoseHandler(evt) {
+    this.updateData({
+      destination: evt.target.value,
+      description: generateDescription(),
+      photos: generatePhoto()
+    });
+  }
+
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._callback.submit(Form.parseDataToEvent(this._data));
@@ -206,6 +215,10 @@ export default class Form extends AbstractView {
     .forEach((eventTypeGroup) => {
       eventTypeGroup.addEventListener(`change`, this._eventTypeChangeHandler);
     });
+
+  this.getElement()
+    .querySelector(`.event__input--destination`)
+    .addEventListener(`change`, this._destinationChoseHandler);
   }
 
   restoreHandlers() {
