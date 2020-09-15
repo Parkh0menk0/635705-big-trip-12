@@ -69,7 +69,7 @@ const createOffersTemplate = (offers) => {
 
 const createPointEditTemplate = (data) => {
 
-  const {isFavoriteChecked, point, destination, startDate, endDate, offers, price, description, photos} = data;
+  const {isFavorite, point, destination, startDate, endDate, offers, price, description, photos} = data;
 
   return `<form class="event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -172,7 +172,7 @@ const createPointEditTemplate = (data) => {
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Delete</button>
 
-        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavoriteChecked}>
+        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite && `checked`}>
         <label class="event__favorite-btn" for="event-favorite-1">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -279,7 +279,7 @@ export default class Form extends SmartView {
         {},
         event,
         {
-          isFavoriteChecked: event.isFavorite ? `checked` : ``
+          isFavorite: event.isFavorite ? `checked` : ``
         }
     );
   }
@@ -287,7 +287,7 @@ export default class Form extends SmartView {
   static parseDataToEvent(data) {
     data = Object.assign({}, data);
 
-    delete data.isFavoriteChecked;
+    delete data.isFavorite;
 
     return data;
   }
