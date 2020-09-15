@@ -105,7 +105,7 @@ export default class Board {
       this._renderDay(isDefaultSorting, date, dateIndex);
 
       events.filter((point) => {
-        return isDefaultSorting ? new Date(point.startDate.toDateString === date) : point;
+        return isDefaultSorting ? new Date(point.startDate).toDateString() === date : point;
       }).forEach((point) => {
         const eventList = this._boardDay.getElement().querySelector(`.trip-events__list`);
         this._renderPoint(eventList, point);
