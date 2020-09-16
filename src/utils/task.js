@@ -1,8 +1,9 @@
 import moment from "moment";
 
-const DAY_IN_MS = 24 * 3600 * 1000;
-const HOUR_IN_MS = 3600 * 1000;
-const MINUTE_IN_MS = 60 * 1000;
+const MILLISECONDS_IN_DAY = 86340000;
+const MINUTES_IN_HOUR = 60;
+const HOURS_IN_DAY = 24;
+const MAX_DAYS_IN_MONTH = 31;
 
 export const toYyyyMmDd = (date) => {
   return `${date.getFullYear()}-${(`0` + (date.getMonth() + 1)).slice(-2)}-${(`0` + date.getDate()).slice(-2)}`;
@@ -45,27 +46,28 @@ export const toForwardSlashDate = (date) => {
 };
 
 export const durationTime = (timeEnd, timeStart) => {
-  const duration = (timeEnd - timeStart);
-  if (duration < HOUR_IN_MS) {
+  const interval = (timeEnd - timeStart);
+  const totalMinutes = moment.duration(interval).asMinutes();
+  const totalHours = moment.duration(interval).asHours();
+  const totalDays = moment.duration(interval).asDays();
+  const wholeDays = Math.trunc(totalDays);
+  const remainingHours = Math.trunc(totalHours - (wholeDays * HOURS_IN_DAY));
 
-    return `0${Math.floor(duration / MINUTE_IN_MS)}M`.slice(-3);
+  const wholeDaysAsMinutes = wholeDays * HOURS_IN_DAY * MINUTES_IN_HOUR;
+  const remainingHoursAsMinutes = remainingHours * MINUTES_IN_HOUR;
+  const remainingMinutes = Math.trunc(Math.ceil(totalMinutes - wholeDaysAsMinutes - remainingHoursAsMinutes));
 
-  } else if (duration < DAY_IN_MS) {
-    const hours = Math.floor(duration / HOUR_IN_MS);
-    const minutes = Math.floor((duration - hours * HOUR_IN_MS) / (60 * 1000));
-    const stringHours = `0${hours}H`.slice(-3);
-    const stringMinutes = `0${minutes}M`.slice(-3);
-
-    return `${stringHours} ${stringMinutes}`;
-
-  } else {
-    const days = Math.floor(duration / (DAY_IN_MS));
-    const hours = Math.floor((duration - days * DAY_IN_MS) / HOUR_IN_MS);
-    const minutes = Math.floor((duration - days * DAY_IN_MS - hours * HOUR_IN_MS) / MINUTE_IN_MS);
-    const stringDays = `0${days}D`.slice(-3);
-    const stringHours = `0${hours}H`.slice(-3);
-    const stringMinutes = `0${minutes}M`.slice(-3);
-
-    return `${stringDays} ${stringHours} ${stringMinutes}`;
+  if (totalMinutes < MINUTES_IN_HOUR) {
+    return moment.utc(interval).format(`mm[m]`);
   }
+
+  if (totalHours < HOURS_IN_DAY) {
+    return moment.utc(interval).format(`hh[h] mm[m]`);
+  }
+
+  if (totalDays < MAX_DAYS_IN_MONTH) {
+    return moment.utc(interval - MILLISECONDS_IN_DAY).format(`DD[D] hh[h] mm[m]`);
+  }
+
+  return `${wholeDays}D ${remainingHours}H ${remainingMinutes}M`;
 };
