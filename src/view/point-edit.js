@@ -1,5 +1,5 @@
 import {generateOffers, generateDescription, generatePhoto} from "../mock/events.js";
-import {toHoursAndMinutes} from "../utils/task.js";
+import {toHoursAndMinutes, toForwardSlashDate} from "../utils/task.js";
 import SmartView from "./smart.js";
 import {cities} from "../const.js";
 import flatpickr from "flatpickr";
@@ -156,12 +156,12 @@ const createPointEditTemplate = (data) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 ${toHoursAndMinutes(startDate)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${toForwardSlashDate(startDate)} ${toHoursAndMinutes(startDate)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 ${toHoursAndMinutes(endDate)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${toForwardSlashDate(startDate)} ${toHoursAndMinutes(endDate)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -199,11 +199,13 @@ export default class Form extends SmartView {
   constructor(event) {
     super();
     this._data = Form.parseEventToData(event);
-    this._callback = {};
+    this._datepicker = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationChoseHandler = this._destinationChoseHandler.bind(this);
+    this._startDateFocusHandler = this._startDateFocusHandler.bind(this);
+    this._endDateFocusHandler = this._endDateFocusHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -213,6 +215,51 @@ export default class Form extends SmartView {
 
   reset(event) {
     this.updateData(Form.parseEventToData(event));
+  }
+
+  _startDateFocusHandler() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `d/m/y H:i`,
+          defaultDate: this._data.startDate,
+          onChange: ([userDate]) => {
+            this.updateData({
+              startDate: userDate,
+              endDate: this._data.endDate
+            }, true);
+          }
+        }
+    );
+  }
+
+  _endDateFocusHandler() {
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
+
+    this._datepicker = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `d/m/y H:i`,
+          minDate: this._data.startDate,
+          defaultDate: this._data.endDate,
+          onChange: ([userDate]) => {
+            this.updateData({
+              startDate: this._data.startDate,
+              endDate: userDate
+            }, true);
+          }
+        }
+    );
   }
 
   _eventTypeChangeHandler(evt) {
@@ -246,6 +293,11 @@ export default class Form extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+
+    if (this._data.startDate > this._data.endDate) {
+      return;
+    }
+
     this._callback.formSubmit(Form.parseDataToEvent(this._data));
   }
 
@@ -259,6 +311,12 @@ export default class Form extends SmartView {
     this.getElement()
     .querySelector(`.event__input--destination`)
     .addEventListener(`change`, this._destinationChoseHandler);
+
+    const startDateInput = this.getElement().querySelector(`#event-start-time-1`);
+    const endDateInput = this.getElement().querySelector(`#event-end-time-1`);
+
+    startDateInput.addEventListener(`focus`, this._startDateFocusHandler);
+    endDateInput.addEventListener(`focus`, this._endDateFocusHandler);
   }
 
   restoreHandlers() {

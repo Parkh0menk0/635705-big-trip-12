@@ -32,6 +32,16 @@ export const toHoursAndMinutes = (date) => {
   return shortTime.join(`:`);
 };
 
+export const toForwardSlashDate = (date) => {
+  let d = new Date(date);
+
+  return [
+    `0` + d.getDate(),
+    `0` + (d.getMonth() + 1),
+    `` + d.getFullYear()
+  ].map((component) => component.slice(-2)).join(`/`);
+};
+
 export const durationTime = (timeEnd, timeStart) => {
   const duration = (timeEnd - timeStart);
   if (duration < HOUR_IN_MS) {

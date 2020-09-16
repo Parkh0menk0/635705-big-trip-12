@@ -6,12 +6,16 @@ export default class Smart extends AbstractView {
     this._data = {};
   }
 
-  updateData(update) {
+  updateData(update, updating = false) {
     if (!update) {
       return;
     }
 
     this._data = Object.assign({}, this._data, update);
+
+    if (updating) {
+      return;
+    }
 
     this.updateElement();
   }
