@@ -1,24 +1,27 @@
 import SortView from "../view/sort.js";
-import PointEditView from "../view/point-edit.js";
-import PoinView from "../view/poin.js";
 import DayListView from "../view/day-list.js";
 import DayView from "../view/day.js";
 import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
-import {render, replace} from "../utils/render.js";
-import {ESC_KEY} from "../const.js";
+import PointPresenter from "./task.js";
+import {updateItem} from "../utils/common.js";
+import {render, remove} from "../utils/render.js";
 import {SortType} from "../const.js";
 
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
+    this._pointPresenter = Object.create(null);
+    this._dayStorage = [];
 
     this._boardList = new DayListView();
-    this._boardDay = new DayView();
+    this._boardDay = null;
     this._sortComponent = new SortView();
     this._noPointComponent = new NoPointsView();
 
+    this._handlePointChange = this._handlePointChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(events) {
@@ -36,7 +39,10 @@ export default class Board {
   }
 
   _clearPoints() {
-    this._boardList.getElement().innerHTML = ``;
+    Object.values(this._pointPresenter).forEach((presenter) => presenter.destroy());
+    this._dayStorage.forEach((day) => remove(day));
+    this._pointPresenter = Object.create(null);
+    this._dayStorage = [];
   }
 
   _handleSortTypeChange(sortType) {
@@ -61,6 +67,17 @@ export default class Board {
     this._renderPoints(sortedPoints, this._boardList, isDefaultSorting);
   }
 
+  _handlePointChange(updatedPoint) {
+    this._events = updateItem(this._events, updatedPoint);
+    this._pointPresenter[updatedPoint.id].init(updatedPoint);
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._pointPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
   _renderSort() {
     render(this._boardContainer, this._sortComponent);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
@@ -70,52 +87,31 @@ export default class Board {
     render(this._boardContainer, this._noPointComponent);
   }
 
+  _renderDay(sorting, date, dateIndex) {
+    this._boardDay = sorting ? new DayView(new Date(date), dateIndex + 1) : new SortedDayView();
+    this._dayStorage.push(this._boardDay);
+  }
+
+  _renderPoint(eventList, event) {
+    const pointPresenter = new PointPresenter(eventList, this._handlePointChange, this._handleModeChange);
+    pointPresenter.init(event);
+    this._pointPresenter[event.id] = pointPresenter;
+  }
+
   _renderPoints(events, container, isDefaultSorting = true) {
     const dates = isDefaultSorting ? [...new Set(events.map((item) => new Date(item.startDate).toDateString()))] : [true];
 
     dates.forEach((date, dateIndex) => {
-      const day = isDefaultSorting ? new DayView(new Date(date), dateIndex + 1) : new SortedDayView();
-
-      const dayElement = day.getElement();
+      this._renderDay(isDefaultSorting, date, dateIndex);
 
       events.filter((point) => {
-        return isDefaultSorting ? new Date(point.startDate.toDateString === date) : point;
+        return isDefaultSorting ? new Date(point.startDate).toDateString() === date : point;
       }).forEach((point) => {
-        const newPoint = new PoinView(point);
-        const editPoint = new PointEditView(point);
-
-        const onEscKeyDown = (evt) => {
-          if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
-            evt.preventDefault();
-            replaceFormToPoint();
-            document.removeEventListener(`keydown`, onEscKeyDown);
-          }
-        };
-
-        const eventList = dayElement.querySelector(`.trip-events__list`);
-
-        const replacePointToForm = () => {
-          replace(editPoint, newPoint);
-        };
-
-        const replaceFormToPoint = () => {
-          replace(newPoint, editPoint);
-        };
-
-        newPoint.setClickHandler(() => {
-          replacePointToForm();
-          document.addEventListener(`keydown`, onEscKeyDown);
-        });
-
-        editPoint.setFormSubmitHandler(() => {
-          replaceFormToPoint();
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        });
-
-        render(eventList, newPoint);
+        const eventList = this._boardDay.getElement().querySelector(`.trip-events__list`);
+        this._renderPoint(eventList, point);
       });
 
-      render(container, day);
+      render(container, this._boardDay);
     });
   }
 }

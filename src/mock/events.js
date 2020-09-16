@@ -1,6 +1,9 @@
 import {getRandomInteger, shuffleArray} from "../utils/common.js";
+import {cities} from "../const.js";
 
 const EVENTS_AMOUNT = 20;
+
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generatePoint = () => {
   const points = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeng`, `Restaurant`];
@@ -8,22 +11,27 @@ const generatePoint = () => {
 };
 
 const generateDestination = () => {
-  const cities = [`Andorra la Vella`, `Athens`, `Belgrade`, `Berlin`, `Bern`, `Bratislava`, `Brussels`, `Bucharest`, `Budapest`,
-    `Chisinau`, `Copenhagen`, `Dublin`, `Helsinki`, `Kiev`, `Lisbon`, `Ljubljana`, `London`, `Luxembourg`, `Madrid`, `Minsk`, `Monaco`,
-    `Moscow`, `Nicosia`, `Nuuk`, `Oslo`, `Paris`, `Podgorica`, `Prague`, `Reykjavik`, `Riga`, `Rome`, `San Marino`, `Sarajevo`,
-    `Skopje`, `Sofia`, `Stockholm`, `Tallinn`, `Tirana`, `Vaduz`, `Valletta`, `Vatican City`, `Vienna`, `Vilnius`, `Warsaw`, `Zagreb`];
   return cities[getRandomInteger(0, cities.length - 1)];
 };
 
-const generateOffers = () => {
+export const generateOffers = (hasChosenOffers = true) => {
   const countOffers = getRandomInteger(0, 5);
   const titles = [`Order Uber`, `Add luggage`, `Rent a car`, `Add breakfast`, `Book tickets`, `Lunch in city`, `Switch to comfort`];
-  const offers = new Array(countOffers).fill().map(() => ({title: titles[getRandomInteger(0, titles.length - 1)], cost: getRandomInteger(5, 100), checked: Boolean(getRandomInteger(0, 1))}));
+  const offers = new Array(countOffers).fill().map((item) => {
+    let i = getRandomInteger(0, titles.length - 1);
+    item = {
+      title: titles[i],
+      type: titles[i].split(` `).slice(-1).join().toLowerCase(),
+      cost: getRandomInteger(5, 100),
+      isChecked: hasChosenOffers ? Boolean(getRandomInteger(0, 1)) : false
+    };
+    return item;
+  });
 
   return offers;
 };
 
-const generateDescription = () => {
+export const generateDescription = () => {
   const sentences = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat
   eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed
   finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit,
@@ -37,13 +45,15 @@ const generateDate = () => {
   return (Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * getRandomInteger(0, 60) * 60 * 1000);
 };
 
-const generatePhoto = () => [`http://picsum.photos/248/152?r=${Math.random()}`];
+export const generatePhoto = () => [`http://picsum.photos/248/152?r=${Math.random()}`];
 
 const generateEvent = () => {
   const startDate = generateDate();
   const endDate = generateDate();
 
   return {
+    isFavorite: true,
+    id: generateId(),
     point: generatePoint(),
     destination: generateDestination(),
     startDate: Math.min(startDate, endDate),
