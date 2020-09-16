@@ -2,6 +2,7 @@ import {generateOffers, generateDescription, generatePhoto} from "../mock/events
 import {toHoursAndMinutes} from "../utils/task.js";
 import SmartView from "./smart.js";
 import {cities} from "../const.js";
+import flatpickr from "flatpickr";
 
 const createDestinationListTemplate = (destinations) => {
   return `<datalist id="destination-list-1">
