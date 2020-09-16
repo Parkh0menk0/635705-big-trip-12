@@ -4,6 +4,8 @@ import SmartView from "./smart.js";
 import {cities} from "../const.js";
 import flatpickr from "flatpickr";
 
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+
 const createDestinationListTemplate = (destinations) => {
   return `<datalist id="destination-list-1">
     ${destinations.map((destination) => `<option value="${destination}"></option>`).join(`\n`)}
