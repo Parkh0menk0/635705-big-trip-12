@@ -5,8 +5,12 @@ import TripСostView from "./view/trip-cost.js";
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
 import BoardPresenter from "./presenter/board.js";
+import PointsModel from './model/points.js';
 import {render, RenderPosition} from "./utils/render.js";
 import {events} from "./mock/events.js";
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(events);
 
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
