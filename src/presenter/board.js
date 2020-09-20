@@ -4,7 +4,7 @@ import DayView from "../view/day.js";
 import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
 import PointPresenter from "./task.js";
-import {render, remove} from "../utils/render.js";
+import {RenderPosition, render, remove} from "../utils/render.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 import {EVENTS_AMOUNT} from "../mock/events.js";
 
@@ -30,16 +30,8 @@ export default class Board {
   }
 
   init() {
-    this._renderSort();
     render(this._boardContainer, this._boardList);
-
-    if (this._pointsModel.length === 0) {
-      console.log(this._pointsModel.length);
-      this._renderNoPoints();
-      return;
-    }
-
-    this._renderPoints(this._getPoints().slice(), this._boardList);
+    this._renderBoard();
   }
 
   _getPoints() {
@@ -56,13 +48,12 @@ export default class Board {
   _clearBoard({resetRenderedPointCount = false, resetSortType = false} = {}) {
     const pointCount = this._getPoints().length;
 
-    if (pointCount === 0) {
-      this._renderNoPoints();
-    }
-
     this._clearPoints();
     this._dayStorage.forEach((day) => remove(day));
     this._dayStorage = [];
+
+    remove(this._sortComponent);
+    remove(this._noPointComponent);
 
     if (resetRenderedPointCount) {
       this._renderedPointCount = EVENTS_AMOUNT;
@@ -82,11 +73,11 @@ export default class Board {
         break;
       case UpdateType.MINOR:
         this._clearBoard();
-        this._renderPoints(this._getPoints().slice(), this._boardList);
+        this._renderBoard();
         break;
       case UpdateType.MAJOR:
         this._clearBoard({resetRenderedPointCount: true, resetSortType: true});
-        this._renderPoints(this._getPoints().slice(), this._boardList);
+        this._renderBoard();
         break;
     }
   }
@@ -103,18 +94,18 @@ export default class Board {
 
     this._currentSortType = sortType;
     this._clearBoard({resetRenderedPointCount: true});
-    this._renderPoints(this._getPoints().slice(), this._boardList);
+    this._renderBoard();
   }
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
-      case UserAction.ADD_EVENT:
+      case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);
         break;
-      case UserAction.DELETE_EVENT:
+      case UserAction.DELETE_POINT:
         this._pointsModel.deletePoint(updateType, update);
         break;
-      case UserAction.EDIT_EVENT:
+      case UserAction.UPDATE_POINT:
         this._pointsModel.updatePoint(updateType, update);
         break;
     }
@@ -133,7 +124,7 @@ export default class Board {
 
     this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-    render(this._boardContainer, this._sortComponent);
+    render(this._boardContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderNoPoints() {
@@ -167,5 +158,17 @@ export default class Board {
 
       render(container, this._boardDay);
     });
+  }
+
+  _renderBoard() {
+    const points = this._getPoints();
+    const pointCount = points.length;
+
+    if (pointCount === 0) {
+      this._renderNoPoints();
+    }
+
+    this._renderSort();
+    this._renderPoints(points.slice(), this._boardList);
   }
 }

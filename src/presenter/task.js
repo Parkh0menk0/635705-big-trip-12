@@ -95,22 +95,22 @@ export default class Point {
 
   _handleFavoriteClick() {
     this._changeData(
-      UserAction.EDIT_EVENT,
-      UpdateType.PATCH,
-      Object.assign({},
-        this._point, {
-          isFavorite: !this._point.isFavorite
-        }
-      )
+        UserAction.UPDATE_POINT,
+        UpdateType.PATCH,
+        Object.assign({},
+            this._point, {
+              isFavorite: !this._point.isFavorite
+            }
+        )
     );
   }
 
   _handleDeleteClick(point) {
-    this._changeData(UserAction.DELETE_EVENT, UpdateType.MINOR, point);
+    this._changeData(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   }
 
   _handleFormSubmit(point) {
-    this._changeData(UserAction.EDIT_EVENT, UpdateType.PATCH, point);
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
     this._replaceFormToPoint();
   }
 }

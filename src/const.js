@@ -18,7 +18,7 @@ export const UpdateType = {
 };
 
 export const UserAction = {
-  ADD_EVENT: `ADD_EVENT`,
-  DELETE_EVENT: `DELETE_EVENT`,
-  EDIT_EVENT: `EDIT_EVENT`
+  UPDATE_POINT: `UPDATE_POINT`,
+  ADD_POINT: `ADD_POINT`,
+  DELETE_POINT: `DELETE_POINT`
 };
