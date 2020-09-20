@@ -198,12 +198,14 @@ const createPointEditTemplate = (data) => {
 export default class Form extends SmartView {
   constructor(event) {
     super();
-    this._data = Form.parseEventToData(event);
+    this._data = event;
     this._datepicker = null;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._destinationChoseHandler = this._destinationChoseHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._startDateFocusHandler = this._startDateFocusHandler.bind(this);
     this._endDateFocusHandler = this._endDateFocusHandler.bind(this);
     this._setInnerHandlers();
@@ -214,7 +216,7 @@ export default class Form extends SmartView {
   }
 
   reset(event) {
-    this.updateData(Form.parseEventToData(event));
+    this.updateData(event);
   }
 
   _startDateFocusHandler() {
@@ -291,6 +293,16 @@ export default class Form extends SmartView {
     this.updateData(update);
   }
 
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+    this.updateData({price: evt.target.value});
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._data);
+  }
+
   _formSubmitHandler(evt) {
     evt.preventDefault();
 
@@ -298,31 +310,30 @@ export default class Form extends SmartView {
       return;
     }
 
-    this._callback.formSubmit(Form.parseDataToEvent(this._data));
+    this._callback.formSubmit(this._data);
   }
 
   _setInnerHandlers() {
-    this.getElement()
-    .querySelectorAll(`.event__type-group`)
-    .forEach((eventTypeGroup) => {
+    this.getElement().querySelectorAll(`.event__type-group`).forEach((eventTypeGroup) => {
       eventTypeGroup.addEventListener(`change`, this._eventTypeChangeHandler);
     });
 
-    this.getElement()
-    .querySelector(`.event__input--destination`)
-    .addEventListener(`change`, this._destinationChoseHandler);
-
-    const startDateInput = this.getElement().querySelector(`#event-start-time-1`);
-    const endDateInput = this.getElement().querySelector(`#event-end-time-1`);
-
-    startDateInput.addEventListener(`focus`, this._startDateFocusHandler);
-    endDateInput.addEventListener(`focus`, this._endDateFocusHandler);
+    this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._destinationChoseHandler);
+    this.getElement().querySelector(`#event-start-time-1`).addEventListener(`focus`, this._startDateFocusHandler);
+    this.getElement().querySelector(`#event-end-time-1`).addEventListener(`focus`, this._endDateFocusHandler);
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, this._priceChangeHandler);
   }
 
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
   setFavoriteClickHandler(callback) {
@@ -333,24 +344,6 @@ export default class Form extends SmartView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
-  }
-
-  static parseEventToData(event) {
-    return Object.assign(
-        {},
-        event,
-        {
-          isFavorite: event.isFavorite ? `checked` : ``
-        }
-    );
-  }
-
-  static parseDataToEvent(data) {
-    data = Object.assign({}, data);
-
-    delete data.isFavorite;
-
-    return data;
   }
 
 }

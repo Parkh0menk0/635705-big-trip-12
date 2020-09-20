@@ -1,7 +1,7 @@
 import {getRandomInteger, shuffleArray} from "../utils/common.js";
 import {cities} from "../const.js";
 
-const EVENTS_AMOUNT = 20;
+export const EVENTS_AMOUNT = 20;
 
 const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
