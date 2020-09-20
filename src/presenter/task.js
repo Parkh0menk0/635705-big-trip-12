@@ -3,6 +3,7 @@ import PoinView from "../view/poin.js";
 import {render, replace, remove} from "../utils/render.js";
 import {ESC_KEY} from "../const.js";
 import {UpdateType, UserAction} from '../const.js';
+import {isDatesEqual} from "../utils/task.js";
 
 const Mode = {
   DEFAULT: `default`,
@@ -109,8 +110,14 @@ export default class Point {
     this._changeData(UserAction.DELETE_POINT, UpdateType.MINOR, point);
   }
 
-  _handleFormSubmit(point) {
-    this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, point);
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._point.startDate, update.startDate);
+
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update
+    );
     this._replaceFormToPoint();
   }
 }

@@ -71,3 +71,11 @@ export const durationTime = (timeEnd, timeStart) => {
 
   return `${wholeDays}D ${remainingHours}H ${remainingMinutes}M`;
 };
+
+export const isDatesEqual = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return true;
+  }
+
+  return moment(dateA).isSame(dateB, `day`);
+};

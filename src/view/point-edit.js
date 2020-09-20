@@ -208,7 +208,19 @@ export default class Form extends SmartView {
     this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._startDateFocusHandler = this._startDateFocusHandler.bind(this);
     this._endDateFocusHandler = this._endDateFocusHandler.bind(this);
+
     this._setInnerHandlers();
+    this._startDateFocusHandler();
+    this._endDateFocusHandler();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   getTemplate() {
@@ -216,7 +228,7 @@ export default class Form extends SmartView {
   }
 
   reset(event) {
-    this.updateData(event);
+    this.updateData(Form.parseEventToData(event));
   }
 
   _startDateFocusHandler() {
@@ -300,7 +312,7 @@ export default class Form extends SmartView {
 
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteClick(this._data);
+    this._callback.deleteClick(Form.parseDataToEvent(this._data));
   }
 
   _formSubmitHandler(evt) {
@@ -326,6 +338,8 @@ export default class Form extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._startDateFocusHandler();
+    this._endDateFocusHandler();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
@@ -344,6 +358,24 @@ export default class Form extends SmartView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  static parseEventToData(event) {
+    return Object.assign(
+        {},
+        event,
+        {
+          isFavorite: event.isFavorite ? `checked` : ``
+        }
+    );
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    delete data.isFavorite;
+
+    return data;
   }
 
 }
