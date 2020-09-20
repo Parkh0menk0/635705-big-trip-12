@@ -5,12 +5,13 @@ import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
 import PointPresenter from "./task.js";
 import {RenderPosition, render, remove} from "../utils/render.js";
-import {SortType, UpdateType, UserAction} from "../const.js";
+import {SortType, UpdateType, UserAction, filter} from "../const.js";
 import {EVENTS_AMOUNT} from "../mock/events.js";
 
 export default class Board {
-  constructor(boardContainer, pointsModel) {
+  constructor(boardContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._currentSortType = SortType.EVENT;
     this._boardContainer = boardContainer;
     this._pointPresenter = Object.create(null);
@@ -25,8 +26,10 @@ export default class Board {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleModelPointsChange = this._handleModelPointsChange.bind(this);
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
 
     this._pointsModel.addObserver(this._handleModelPointsChange);
+    this._filterModel.addObserver(this._handleModelPointsChange);
   }
 
   init() {
@@ -35,14 +38,18 @@ export default class Board {
   }
 
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[filterType](points);
+
     switch (this._currentSortType) {
       case SortType.TIME:
-        return this._pointsModel.getPoints().slice().sort((pointA, pointB) => pointB.duration - pointA.duration);
+        return filteredPoints.sort((pointA, pointB) => pointB.duration - pointA.duration);
       case SortType.PRICE:
-        return this._pointsModel.getPoints().slice().sort((pointA, pointB) => pointB.price - pointA.price);
+        return filteredPoints.sort((pointA, pointB) => pointB.price - pointA.price);
     }
 
-    return this._pointsModel.getPoints();
+    return filteredPoints.sort((pointA, pointB) => pointA.startDate - pointB.startDate);
   }
 
   _clearBoard({resetRenderedPointCount = false, resetSortType = false} = {}) {
@@ -80,6 +87,10 @@ export default class Board {
         this._renderBoard();
         break;
     }
+  }
+
+  _filterTypeChangeHandler(filterType) {
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
   _clearPoints() {
