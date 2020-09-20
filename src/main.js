@@ -28,9 +28,9 @@ render(tripControls, new FilterView());
 
 const tripEvents = document.querySelector(`.trip-events`);
 
-const boardPresenter = new BoardPresenter(tripEvents);
+const boardPresenter = new BoardPresenter(tripEvents, pointsModel);
 
-boardPresenter.init(events);
+boardPresenter.init();
 
 const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
 
