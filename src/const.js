@@ -10,3 +10,15 @@ export const cities = [`Andorra la Vella`, `Athens`, `Belgrade`, `Berlin`, `Bern
 `Chisinau`, `Copenhagen`, `Dublin`, `Helsinki`, `Kiev`, `Lisbon`, `Ljubljana`, `London`, `Luxembourg`, `Madrid`, `Minsk`, `Monaco`,
 `Moscow`, `Nicosia`, `Nuuk`, `Oslo`, `Paris`, `Podgorica`, `Prague`, `Reykjavik`, `Riga`, `Rome`, `San Marino`, `Sarajevo`,
 `Skopje`, `Sofia`, `Stockholm`, `Tallinn`, `Tirana`, `Vaduz`, `Valletta`, `Vatican City`, `Vienna`, `Vilnius`, `Warsaw`, `Zagreb`];
+
+export const UpdateType = {
+  PATCH: `PATCH`,
+  MINOR: `MINOR`,
+  MAJOR: `MAJOR`
+};
+
+export const UserAction = {
+  ADD_EVENT: `ADD_EVENT`,
+  DELETE_EVENT: `DELETE_EVENT`,
+  EDIT_EVENT: `EDIT_EVENT`
+};
