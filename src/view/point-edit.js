@@ -3,6 +3,7 @@ import {toHoursAndMinutes, toForwardSlashDate} from "../utils/task.js";
 import SmartView from "./smart.js";
 import {cities} from "../const.js";
 import flatpickr from "flatpickr";
+import he from 'he';
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
@@ -161,7 +162,7 @@ const createPointEditTemplate = (data) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${point}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination)}" list="destination-list-1">
           ${createDestinationListTemplate(cities)}
         </div>
 
