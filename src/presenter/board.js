@@ -4,8 +4,9 @@ import DayView from "../view/day.js";
 import SortedDayView from "../view/day-sorted.js";
 import NoPointsView from "../view/no-points.js";
 import PointPresenter from "./task.js";
+import PointNewPresenter from './point-new.js';
 import {RenderPosition, render, remove} from "../utils/render.js";
-import {SortType, UpdateType, UserAction, filter} from "../const.js";
+import {SortType, UpdateType, UserAction, filter, FilterType} from "../const.js";
 import {EVENTS_AMOUNT} from "../mock/events.js";
 
 export default class Board {
@@ -30,11 +31,19 @@ export default class Board {
 
     this._pointsModel.addObserver(this._handleModelPointsChange);
     this._filterModel.addObserver(this._handleModelPointsChange);
+
+    this._pointNewPresenter = new PointNewPresenter(this._boardList, this._handleModelPointsChange);
   }
 
   init() {
     render(this._boardContainer, this._boardList);
     this._renderBoard();
+  }
+
+  createPoint() {
+    this._currentSortType = SortType.EVENT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._pointNewPresenter.init();
   }
 
   _getPoints() {
@@ -53,6 +62,7 @@ export default class Board {
   }
 
   _clearBoard({resetRenderedPointCount = false, resetSortType = false} = {}) {
+    this._pointNewPresenter.destroy();
     const pointCount = this._getPoints().length;
 
     this._clearPoints();
@@ -123,9 +133,8 @@ export default class Board {
   }
 
   _handleModeChange() {
-    Object
-      .values(this._pointPresenter)
-      .forEach((presenter) => presenter.resetView());
+    this._pointNewPresenter.destroy();
+    Object.values(this._pointPresenter).forEach((presenter) => presenter.resetView());
   }
 
   _renderSort() {

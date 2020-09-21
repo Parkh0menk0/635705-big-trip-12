@@ -39,3 +39,8 @@ boardPresenter.init();
 const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
 
 document.querySelector(`.trip-info__cost-value`).value = getFullPrice;
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  boardPresenter.createPoint();
+});

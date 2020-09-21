@@ -6,6 +6,19 @@ import flatpickr from "flatpickr";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
+const tmp = {
+  description: ``,
+  destination: ``,
+  endDate: Date.now(),
+  id: 0,
+  isFavorite: false,
+  offers: [],
+  photos: [],
+  point: ``,
+  price: 0,
+  startDate: Date.now()
+};
+
 const createDestinationListTemplate = (destinations) => {
   return `<datalist id="destination-list-1">
     ${destinations.map((destination) => `<option value="${destination}"></option>`).join(`\n`)}
@@ -196,7 +209,7 @@ const createPointEditTemplate = (data) => {
 };
 
 export default class Form extends SmartView {
-  constructor(event) {
+  constructor(event = tmp) {
     super();
     this._data = event;
     this._datepicker = null;

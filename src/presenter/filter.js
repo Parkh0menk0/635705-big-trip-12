@@ -37,7 +37,7 @@ export default class Filter {
   }
 
   _getFilters() {
-    return [FilterType.EVERYTHING, FilterType.FUTURE, FilterType.PAST];
+    return Object.values(FilterType);
   }
 
   _filterTypeChangeHandler(filterType) {
