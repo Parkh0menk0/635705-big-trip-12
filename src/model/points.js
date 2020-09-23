@@ -27,11 +27,13 @@ export default class Points extends Observer {
       ...this._points.slice(index + 1)
     ];
 
-    this._notify(updateType, update);
+      this._notify(updateType, update);
   }
 
   addPoint(updateType, update) {
-    this._points = [update, ...this._points];
+    if (update) {
+      this._points = [update, ...this._points];
+    }
 
     this._notify(updateType, update);
   }
@@ -39,11 +41,13 @@ export default class Points extends Observer {
   deletePoint(updateType, update) {
     const index = this._points.findIndex((point) => point.id === update.id);
 
-    this._points = [
-      ...this._points.slice(0, index),
-      ...this._points.slice(index + 1)
-    ];
+    if (index > -1) {
+      this._points = [
+        ...this._points.slice(0, index),
+        ...this._points.slice(index + 1)
+      ];
 
-    this._notify(updateType);
+      this._notify(updateType, update);
+    }
   }
 }
