@@ -6,19 +6,6 @@ export const SortType = {
   PRICE: `sort-price`
 };
 
-export const preposition = {
-  'Check-in': `in`,
-  'Sightseeing': `in`,
-  'Restaurant': `in`,
-  'Taxi': `to`,
-  'Bus': `to`,
-  'Train': `to`,
-  'Ship': `to`,
-  'Transport': `to`,
-  'Drive': `to`,
-  'Flight': `to`
-};
-
 export const cities = [`Andorra la Vella`, `Athens`, `Belgrade`, `Berlin`, `Bern`, `Bratislava`, `Brussels`, `Bucharest`, `Budapest`,
 `Chisinau`, `Copenhagen`, `Dublin`, `Helsinki`, `Kiev`, `Lisbon`, `Ljubljana`, `London`, `Luxembourg`, `Madrid`, `Minsk`, `Monaco`,
 `Moscow`, `Nicosia`, `Nuuk`, `Oslo`, `Paris`, `Podgorica`, `Prague`, `Reykjavik`, `Riga`, `Rome`, `San Marino`, `Sarajevo`,
@@ -37,13 +24,18 @@ export const UserAction = {
 };
 
 export const FilterType = {
-  EVERYTHING: `EVERYTHING`,
-  FUTURE: `FUTURE`,
-  PAST: `PAST`
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
 };
 
-export const filter = {
-  [FilterType.EVERYTHING]: (events) => events,
-  [FilterType.FUTURE]: (events) => events.filter((event) => event.startDate > Date.now()),
-  [FilterType.PAST]: (events) => events.filter((event) => event.endDate < Date.now())
+export const EVENT_VEHICLES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`];
+export const EVENT_ACTIVITIES = [`Check-in`, `Sightseeing`, `Restaurant`];
+export const EVENT_TYPES = EVENT_VEHICLES.concat(EVENT_ACTIVITIES);
+
+export const MODE = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`,
+  CREATE: `CREATE`
 };
+
