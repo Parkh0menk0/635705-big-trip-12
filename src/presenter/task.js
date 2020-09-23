@@ -1,14 +1,7 @@
 import PointEditView from "../view/point-edit.js";
 import PoinView from "../view/poin.js";
 import {render, replace, remove} from "../utils/render.js";
-import {ESC_KEY} from "../const.js";
-import {UpdateType, UserAction} from '../const.js';
-import {isDatesEqual} from "../utils/task.js";
-
-const Mode = {
-  DEFAULT: `default`,
-  EDIT: `edit`
-};
+import {UserAction, UpdateType, ESC_KEY, Mode} from "../const.js";
 
 export default class Point {
   constructor(pointListContainer, changeData, changeMode) {
@@ -21,7 +14,7 @@ export default class Point {
     this._mode = Mode.DEFAULT;
 
     this._handleClick = this._handleClick.bind(this);
-    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -37,12 +30,12 @@ export default class Point {
     this._pointEditComponent = new PointEditView(point);
 
     this._pointComponent.setClickHandler(this._handleClick);
-    this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._pointEditComponent.setFavouriteClickHandler(this._handleFavouriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
-      render(this._pointListContainer, this._pointComponent);
+      render(this._pointListContainer.getElement(), this._pointComponent);
       return;
     }
 
@@ -60,64 +53,78 @@ export default class Point {
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceFormToPoint();
+      this._replaceFormToEvent();
     }
   }
 
   destroy() {
     remove(this._pointComponent);
     remove(this._pointEditComponent);
+    remove(this._pointListContainer);
   }
 
-  _replacePointToForm() {
+  _replaceEventToForm() {
     replace(this._pointEditComponent, this._pointComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = Mode.EDIT;
   }
 
-  _replaceFormToPoint() {
+  _replaceFormToEvent() {
     replace(this._pointComponent, this._pointEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = Mode.DEFAULT;
+  }
+
+  _isCostChanged(cost) {
+    if (this._point.cost !== cost) {
+      return true;
+    }
+    return false;
+  }
+
+  _handleClick() {
+    this._replaceEventToForm();
+  }
+
+  _handleFormSubmit(tripEvent) {
+    let updateType = UpdateType.PATCH;
+
+    if (this._isCostChanged(tripEvent.cost)) {
+      updateType = UpdateType.MINOR;
+    }
+
+    this._replaceFormToEvent();
+    this._changeData(
+        UserAction.UPDATE_POINT,
+        updateType,
+        tripEvent
+    );
+  }
+
+  _handleDeleteClick(tripEvent) {
+    this._changeData(
+        UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        tripEvent
+    );
   }
 
   _escKeyDownHandler(evt) {
     if (evt.key === ESC_KEY || evt.key === ESC_KEY.slice(0, 3)) {
       evt.preventDefault();
       this._pointEditComponent.reset(this._point);
-      this._replaceFormToPoint();
+      this._replaceFormToEvent();
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
     }
   }
 
-  _handleClick() {
-    this._replacePointToForm();
-  }
-
-  _handleFavoriteClick() {
+  _handleFavouriteClick(evt, data) {
+    let updated = Object.assign({}, data, {isFavourite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,
-        Object.assign({},
-            this._point, {
-              isFavorite: !this._point.isFavorite
-            }
-        )
+        updated
     );
-  }
-
-  _handleDeleteClick(point) {
-    this._changeData(UserAction.DELETE_POINT, UpdateType.MINOR, point);
-  }
-
-  _handleFormSubmit(update) {
-    const isMinorUpdate = !isDatesEqual(this._point.startDate, update.startDate) || !isDatesEqual(this._point.endDate, update.endDate);
-
-    this._changeData(
-        UserAction.UPDATE_POINT,
-        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-        update
-    );
-    this._replaceFormToPoint();
   }
 }
