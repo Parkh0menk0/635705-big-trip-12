@@ -1,41 +1,53 @@
-import AbstractView from './abstract.js';
+import AbstractView from "./abstract.js";
+import {FilterType} from "../const.js";
 
-const createFilterItem = (filter, currentFilterType) => {
-  return `<div class="trip-filters__filter">
-    <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" ${filter === currentFilterType ? `checked` : ``}>
-    <label class="trip-filters__filter-label" for="filter-${filter}">${filter}</label>
-  </div>`;
-};
 
-const createFilterTemplate = (filterItems, currentFilterType) => {
-  const filterElement = filterItems.map((filter) => createFilterItem(filter, currentFilterType)).join(``);
+const createFilterTemplate = () => {
+  return (
+    `<form class="trip-filters" action="#" method="get">
+      <div class="trip-filters__filter">
+        <input id="filter-${FilterType.EVERYTHING}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${FilterType.EVERYTHING}" checked>
+        <label class="trip-filters__filter-label" for="filter-${FilterType.EVERYTHING}">Everything</label>
+      </div>
 
-  return `<form class="trip-filters" action="#" method="get">
-    ${filterElement}
-    <button class="visually-hidden" type="submit">Accept filter</button>
-  </form>`;
+      <div class="trip-filters__filter">
+        <input id="filter-${FilterType.FUTURE}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${FilterType.FUTURE}">
+        <label class="trip-filters__filter-label" for="filter-${FilterType.FUTURE}">Future</label>
+      </div>
+
+      <div class="trip-filters__filter">
+        <input id="filter-${FilterType.PAST}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${FilterType.PAST}">
+        <label class="trip-filters__filter-label" for="filter-${FilterType.PAST}">Past</label>
+      </div>
+
+      <button class="visually-hidden" type="submit">Accept filter</button>
+    </form>`
+  );
 };
 
 export default class Filter extends AbstractView {
-  constructor(filters, currentFilterType) {
+  constructor() {
     super();
-    this._filters = filters;
-    this._currentFilterType = currentFilterType;
-
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilterTemplate(this._filters, this._currentFilterType);
+    return createFilterTemplate();
   }
 
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
-    this.getElement().addEventListener(`change`, this._filterTypeChangeHandler);
+
+    const filterRadioButtons = this.getElement().querySelectorAll(`.trip-filters__filter-input`);
+
+    filterRadioButtons.forEach((element) => {
+      element.addEventListener(`change`, this._filterTypeChangeHandler);
+    });
   }
 
   _filterTypeChangeHandler(evt) {
     evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
+    const filter = evt.target.value;
+    this._callback.filterTypeChange(filter);
   }
 }
