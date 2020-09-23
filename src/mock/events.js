@@ -1,4 +1,4 @@
-import {getRandomInteger, shuffleArray} from "../utils/common.js";;
+import {getRandomInteger, shuffleArray} from "../utils/common.js";
 import {generateId} from "../utils/task.js";
 import {EVENT_TYPES, cities} from "../const.js";
 
@@ -45,7 +45,7 @@ export const generateOffers = () => {
   return offers;
 };
 
-const generateDescription = () => {
+export const generateDescription = () => {
   const sentences = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat
   eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed
   finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit,

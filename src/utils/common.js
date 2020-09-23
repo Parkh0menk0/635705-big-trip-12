@@ -1,6 +1,6 @@
-import {groupBy, range, isEqual, isNumber} from 'lodash';
+import {groupBy, range, isEqual, cloneDeep, isNumber} from 'lodash';
 
-export {groupBy, range, isEqual, isNumber};
+export {groupBy, range, isEqual, cloneDeep, isNumber};
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
