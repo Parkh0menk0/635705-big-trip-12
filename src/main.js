@@ -1,46 +1,49 @@
-"use strict";
 
-import RouteInfoView from "./view/route-info.js";
-import TripСostView from "./view/trip-cost.js";
-import SiteMenuView from "./view/site-menu.js";
-import BoardPresenter from "./presenter/board.js";
-import FilterPresenter from './presenter/filter.js';
-import PointsModel from './model/points.js';
-import FilterModel from "./model/filter.js";
+import "../node_modules/flatpickr/dist/themes/material_blue.css";
+
+import {generateEvent} from "./mock/events.js";
 import {render, RenderPosition} from "./utils/render.js";
-import {events} from "./mock/events.js";
+
+import SiteMenuView from "./view/site-menu.js";
+
+import BoardPresenter from "./presenter/board.js";
+import FilterPresenter from "./presenter/filter.js";
+import BoardInfoPresenter from "./presenter/board-info.js";
+
+import PointsModel from "./model/points.js";
+import FiltersModel from "./model/filter.js";
+
+const EVENT_COUNT = 20;
+const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(events);
 
-const filterModel = new FilterModel();
+const filtersModel = new FiltersModel();
 
 const header = document.querySelector(`.page-header`);
 const tripMain = header.querySelector(`.trip-main`);
+const tripControls = header.querySelector(`.trip-controls`);
 
-render(tripMain, new RouteInfoView(), RenderPosition.AFTERBEGIN);
 
-const tripInfo = header.querySelector(`.trip-info`);
+const boardInfoPresenter = new BoardInfoPresenter(tripMain, pointsModel);
+boardInfoPresenter.init(events);
 
-render(tripInfo, new TripСostView());
+const tripControsElements = [...tripControls.querySelectorAll(`h2`)];
 
-const tripControls = tripMain.querySelector(`.trip-controls`);
+render(tripControsElements[0], new SiteMenuView(), RenderPosition.AFTEREND);
 
-render(tripControls, new SiteMenuView(), RenderPosition.AFTERBEGIN);
+const mainContentContainerElemant = document.querySelector(`.page-main`);
+const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.trip-events`);
 
-const tripEvents = document.querySelector(`.trip-events`);
-
-const boardPresenter = new BoardPresenter(tripEvents, pointsModel, filterModel);
-const filterPresenter = new FilterPresenter(tripControls, filterModel, pointsModel);
-
-filterPresenter.init();
+const boardPresenter = new BoardPresenter(tripEventsContainerElement, pointsModel, filtersModel);
 boardPresenter.init();
 
-const getFullPrice = events.reduce((acc, item) => acc + item.price, 0);
+new FilterPresenter(tripControsElements[1], filtersModel, pointsModel).init();
 
-document.querySelector(`.trip-info__cost-value`).value = getFullPrice;
+const newTaskButton = document.querySelector(`.trip-main__event-add-btn`);
 
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+newTaskButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
   boardPresenter.createPoint();
-});
+})
