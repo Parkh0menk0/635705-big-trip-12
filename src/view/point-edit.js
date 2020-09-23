@@ -194,7 +194,7 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${cost}">
+        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${cost}">
       </div>
 
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
@@ -233,7 +233,7 @@ export default class Form extends SmartView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._favouriteClickHandler = this._favouriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
     this._destinationChoseHandler = this._destinationChoseHandler.bind(this);
@@ -299,7 +299,7 @@ export default class Form extends SmartView {
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavouriteClickHandler(this._callback.favouriteClick);
-    this.setDeleteClickHandle(this._callback.deleteClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _validateForm() {
@@ -339,7 +339,7 @@ export default class Form extends SmartView {
   }
 
   _priceChangeHandler(evt) {
-    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``); // временное решение запрещать ввод не числовых значений через regexp
+    evt.currentTarget.value = evt.currentTarget.value.replace(/[^0-9]/g, ``);
     this._cost = evt.currentTarget.value;
     this._data.cost = this._cost;
 
@@ -429,7 +429,7 @@ export default class Form extends SmartView {
     this._callback.formSubmit(this._data);
   }
 
-  _favoriteClickHandler(evt) {
+  _favouriteClickHandler(evt) {
     evt.preventDefault();
     this._callback.favouriteClick(evt.target.checked, this._data);
   }
@@ -446,10 +446,10 @@ export default class Form extends SmartView {
 
   setFavouriteClickHandler(callback) {
     this._callback.favouriteClick = callback;
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteClickHandler);
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favouriteClickHandler);
   }
 
-  setDeleteClickHandle(callback) {
+  setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }

@@ -33,9 +33,9 @@ export const EVENT_VEHICLES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Dri
 export const EVENT_ACTIVITIES = [`Check-in`, `Sightseeing`, `Restaurant`];
 export const EVENT_TYPES = EVENT_VEHICLES.concat(EVENT_ACTIVITIES);
 
-export const MODE = {
+export const Mode = {
   DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`,
+  EDIT: `EDIT`,
   CREATE: `CREATE`
 };
 

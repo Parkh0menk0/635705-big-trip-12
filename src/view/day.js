@@ -7,8 +7,8 @@ const createDayTemplate = (date, count) => {
     `<li class="trip-days__item  day">
       <div class="day__info">
         ${date && count ?
-          `<span class="day__counter">${count}</span>
-          <time
+      `<span class="day__counter">${count}</span>
+            <time
             class="day__date"
             datetime="${date}"
           >${formatedDate}</time>` : ``}
