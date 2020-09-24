@@ -1,10 +1,10 @@
-import {render, RenderPosition, remove} from "../utils/render";
-import {NEW_EVENT} from "../view/point-edit";
-import PointEditView from "../view/point-edit";
-import {UserAction, UpdateType, ESC_KEY, Mode} from "../const";
-import {generateId} from "../utils/task";
+import {render, RenderPosition, remove} from "../utils/render.js";
+import {NEW_EVENT} from "../view/point-edit.js";
+import PointEditView from "../view/point-edit.js";
+import {UserAction, UpdateType, ESC_KEY, Mode} from "../const.js";
+import {generateId} from "../utils/task.js";
 
-export default class EventNew {
+export default class PointNew {
   constructor(pointListContainer, changeData, changeMode, pointsModel) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
@@ -20,7 +20,8 @@ export default class EventNew {
     this._isFavouriteClick = this._isFavouriteClick.bind(this);
   }
 
-  init() {
+  init(onCloseCallback) {
+    this._onCloseFormCallback = onCloseCallback;
     this._event = NEW_EVENT;
 
     this._pointEditComponent = new PointEditView(this._event, Mode.CREATE);
@@ -48,23 +49,24 @@ export default class EventNew {
 
   destroy() {
     this._changeMode();
+    this._onCloseFormCallback();
   }
 
-  _handleFormSubmit(tripEvent) {
+  _handleFormSubmit(point) {
     let updateType = UpdateType.MINOR;
 
     this._changeData(
         UserAction.ADD_POINT,
         updateType,
-        Object.assign({id: generateId()}, tripEvent)
+        Object.assign({id: generateId()}, point)
     );
     this.destroy();
   }
 
-  _handleDeleteClick(tripEvent) {
-    tripEvent = null;
+  _handleDeleteClick(point) {
+    point = null;
     this.destroy();
-    this._changeData(UserAction.ADD_POINT, UpdateType.MINOR, tripEvent);
+    this._changeData(UserAction.ADD_POINT, UpdateType.MINOR, point);
   }
 
   _escKeyDownHandler(evt) {
