@@ -47,7 +47,7 @@ export default class Board {
     this._filterModel.removeObserver(this._handleModelEvent);
   }
 
-  createPoint(onCloseCallback) {
+  createPoint(callback) {
     this._currentSortType = SortType.EVENT;
     this._filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
 
@@ -57,7 +57,7 @@ export default class Board {
     }
 
     const newPointPresenter = this._pointNewPresenter;
-    newPointPresenter.init(onCloseCallback);
+    newPointPresenter.init(callback);
     this._pointPresenter[`0`] = newPointPresenter;
   }
 
