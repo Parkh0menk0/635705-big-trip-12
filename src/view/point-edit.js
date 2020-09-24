@@ -197,6 +197,9 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
         <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${cost}">
       </div>
 
+      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      ${mode === Mode.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`}
+
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
       <label class="event__favorite-btn ${mode === Mode.CREATE ? `visually-hidden` : ``}" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
@@ -205,8 +208,9 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
         </svg>
       </label>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      ${mode === Mode.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`}
+      <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Open event</span>
+      </button>
     </header>
     ${eventDetailsTemplate}
   </form>`
