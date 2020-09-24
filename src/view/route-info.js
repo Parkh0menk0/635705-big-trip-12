@@ -4,7 +4,7 @@ export const createRouteInfoTemplate = ({route, duration, cost}) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
-        <h1 class="trip-info__title">${route.join(` &mdash; `)}</h1>
+        <h1 class="trip-info__title">${route.length > 3 ? [route[0], route.slice(-1)].join(` &mdash; &hellip; &mdash; `) : route.join(` &mdash; `)}</h1>
 
         <p class="trip-info__dates">${duration}</p>
       </div>
