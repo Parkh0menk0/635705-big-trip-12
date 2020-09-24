@@ -24,6 +24,7 @@ export default class Board {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelPointsChange = this._handleModelPointsChange.bind(this);
+    this._filterModel.addObserver(this._handleModelPointsChange);
 
     this._pointNewPresenter = new PointNewPresenter(this._boardContainer, this._handleViewAction, this._handleModeChange, this._pointsModel);
   }
@@ -32,7 +33,6 @@ export default class Board {
     this._renderBoard();
 
     this._pointsModel.addObserver(this._handleModelPointsChange);
-    this._filterModel.addObserver(this._handleModelPointsChange);
   }
 
   destroy() {
