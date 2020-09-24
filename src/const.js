@@ -39,3 +39,8 @@ export const Mode = {
   CREATE: `CREATE`
 };
 
+export const MenuItem = {
+  TABLE: `TABLE`,
+  STATISTIC: `STATISTIC`,
+};
+

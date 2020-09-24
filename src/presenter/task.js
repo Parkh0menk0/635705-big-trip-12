@@ -87,10 +87,10 @@ export default class Point {
     this._replaceEventToForm();
   }
 
-  _handleFormSubmit(tripEvent) {
+  _handleFormSubmit(point) {
     let updateType = UpdateType.PATCH;
 
-    if (this._isCostChanged(tripEvent.cost)) {
+    if (this._isCostChanged(point.cost)) {
       updateType = UpdateType.MINOR;
     }
 
@@ -98,15 +98,15 @@ export default class Point {
     this._changeData(
         UserAction.UPDATE_POINT,
         updateType,
-        tripEvent
+        point
     );
   }
 
-  _handleDeleteClick(tripEvent) {
+  _handleDeleteClick(point) {
     this._changeData(
         UserAction.DELETE_POINT,
         UpdateType.MINOR,
-        tripEvent
+        point
     );
   }
 

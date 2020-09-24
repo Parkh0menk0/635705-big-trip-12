@@ -25,17 +25,29 @@ export default class Board {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelPointsChange = this._handleModelPointsChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelPointsChange);
-    this._filterModel.addObserver(this._handleModelPointsChange);
-
     this._pointNewPresenter = new PointNewPresenter(this._boardContainer, this._handleViewAction, this._handleModeChange, this._pointsModel);
   }
 
   init() {
     this._renderBoard();
+
+    this._pointsModel.addObserver(this._handleModelPointsChange);
+    this._filterModel.addObserver(this._handleModelPointsChange);
   }
 
-  createPoint() {
+  destroy() {
+    remove(this._sortComponent);
+
+    if (this._noPointComponent) {
+      remove(this._noPointComponent);
+    }
+
+    this._clearPoints();
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createPoint(onCloseCallback) {
     this._currentSortType = SortType.EVENT;
     this._filterModel.setFilter(UpdateType.MINOR, FilterType.EVERYTHING);
 
@@ -45,7 +57,7 @@ export default class Board {
     }
 
     const newPointPresenter = this._pointNewPresenter;
-    newPointPresenter.init();
+    newPointPresenter.init(onCloseCallback);
     this._pointPresenter[`0`] = newPointPresenter;
   }
 
