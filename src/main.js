@@ -11,8 +11,18 @@ import SiteMenuPresenter from './presenter/site-menu';
 import PointsModel from "./model/points.js";
 import FiltersModel from "./model/filter.js";
 
+import Api from "./api.js";
+
 const EVENT_COUNT = 20;
+const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getPoints().then((point) => {
+  console.log(point);
+});
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(events);
