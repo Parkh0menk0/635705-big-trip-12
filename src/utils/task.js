@@ -41,6 +41,7 @@ export const getRouteInfo = (events) => {
   };
 
   const getTotalCost = () => {
+    // return Object.values(events).reduce((points, point) => points.concat(point)).map((point) => point.cost).reduce((total, amount) => total + amount);
     const totalCost = Object.values(events).reduce((total, amount) => {
       const totalCostyDay = amount.reduce((totalByDay, amountByDay) => {
         return totalByDay + amountByDay.cost;
