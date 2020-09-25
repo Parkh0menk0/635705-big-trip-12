@@ -4,7 +4,7 @@ import {render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType, ESC_KEY, Mode} from "../const.js";
 
 export default class Point {
-  constructor(pointListContainer, changeData, changeMode) {
+  constructor(pointListContainer, changeData, changeMode, offersModel, destinationsModel) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
@@ -13,6 +13,9 @@ export default class Point {
     this._pointEditComponent = null;
     this._mode = Mode.DEFAULT;
 
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+
     this._handleClick = this._handleClick.bind(this);
     this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -20,14 +23,16 @@ export default class Point {
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(point) {
+  init(point, offers, destinations) {
     this._point = point;
+    this._offers = offers;
+    this._destinations = destinations;
 
     const prevPointComponent = this._pointComponent;
     const prevPointEditComponent = this._pointEditComponent;
 
-    this._pointComponent = new PoinView(point);
-    this._pointEditComponent = new PointEditView(point);
+    this._pointComponent = new PoinView(point, this._offers, this._destinations);
+    this._pointEditComponent = new PointEditView(point, this._offers, this._destinations);
 
     this._pointComponent.setClickHandler(this._handleClick);
     this._pointEditComponent.setFavouriteClickHandler(this._handleFavouriteClick);
