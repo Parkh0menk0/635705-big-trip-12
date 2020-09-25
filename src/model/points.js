@@ -6,8 +6,9 @@ export default class Points extends Observer {
     this._points = [];
   }
 
-  setPoints(points) {
+  setPoints(updateType, points) {
     this._points = points.slice();
+    this._notify(updateType);
   }
 
   getPoints() {
@@ -16,23 +17,23 @@ export default class Points extends Observer {
 
   updatePoint(updateType, update) {
     const index = this._points.findIndex((point) => point.id === update.id);
+    if (index > -1) {
+      this._points = [
+        ...this._points.slice(0, index),
+        update,
+        ...this._points.slice(index + 1)
+      ];
 
-    if (index === -1) {
-      throw new Error(`Can't update unexisting point`);
+      this._notify(updateType, update);
     }
-
-    this._points = [
-      ...this._points.slice(0, index),
-      update,
-      ...this._points.slice(index + 1)
-    ];
-
-    this._notify(updateType, update);
   }
 
   addPoint(updateType, update) {
     if (update) {
-      this._points = [update, ...this._points];
+      this._points = [
+        update,
+        ...this._points
+      ];
     }
 
     this._notify(updateType, update);

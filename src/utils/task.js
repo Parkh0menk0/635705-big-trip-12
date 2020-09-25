@@ -3,9 +3,29 @@ import {groupBy} from "./common.js";
 import {FilterType} from "../const.js";
 
 export const groupByDay = (events) => {
-  return groupBy(events.slice().sort((pointA, pointB) => pointA.endDate > pointB.startDate), (item) => {
+  const sortedDates = events.slice();
+
+  sortedDates
+    .sort((event, event2) => {
+      const date1 = event.endDate;
+      const date2 = event2.startDate;
+
+      if (date1 > date2) {
+        return 1;
+      }
+
+      if (date1 < date2) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+  const groupedByDates = groupBy(sortedDates, (item) => {
     return moment(item.startDate).startOf(`day`).format();
   });
+
+  return groupedByDates;
 };
 
 export const sortByDuration = (pointA, pointB) => {
