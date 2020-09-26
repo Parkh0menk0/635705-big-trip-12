@@ -56,9 +56,9 @@ export const createPoinTemplate = (event) => {
 
   const getEventTitle = () => {
     if (EVENT_ACTIVITIES.map((evt) => evt.toLowerCase()).includes(type.toLowerCase())) {
-      return `${type.charAt(0).toUpperCase() + type.slice(1)} in ${destination}`;
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} in ${he.encode(destination)}`;
     } else {
-      return `${type.charAt(0).toUpperCase() + type.slice(1)} to ${destination}`;
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} to ${he.encode(destination)}`;
     }
   };
 

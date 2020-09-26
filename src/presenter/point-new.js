@@ -15,7 +15,7 @@ export default class PointNew {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._isFavouriteClick = this._isFavouriteClick.bind(this);
+    this._isFavoriteClick = this._isFavoriteClick.bind(this);
   }
 
   init(points, offers, destinations, callback) {
@@ -26,7 +26,7 @@ export default class PointNew {
 
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
-    this._pointEditComponent.setFavouriteClickHandler(this._isFavouriteClick);
+    this._pointEditComponent.setFavoriteClickHandler(this._isFavoriteClick);
 
     this._pointEditComponent.getElement().classList.add(`create-event`);
 
@@ -75,8 +75,8 @@ export default class PointNew {
     }
   }
 
-  _isFavouriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavourite: evt});
+  _isFavoriteClick(evt, data) {
+    let updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,

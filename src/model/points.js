@@ -62,7 +62,7 @@ export default class Points extends Observer {
           isFavorite: event.is_favorite,
           cost: event.base_price,
           destination: event.destination.name,
-          destinationInfo: {...event.destination},
+          destinationInfo: event.destination,
           offers: event.offers.map((offer) => {
             return {
               cost: offer.price,
@@ -92,7 +92,7 @@ export default class Points extends Observer {
           'date_from': event.endDate instanceof Date ? event.startDate.toISOString() : null,
           'date_to': event.startDate instanceof Date ? event.endDate.toISOString() : null,
           'is_favorite': event.isFavorite,
-          'destination': {...event.destinationInfo},
+          'destination': event.destinationInfo,
           'offers': event.offers.map((offer) => {
             return {
               'price': Number(offer.cost),

@@ -17,7 +17,7 @@ export default class Point {
     this._destinationsModel = destinationsModel;
 
     this._handleClick = this._handleClick.bind(this);
-    this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -35,7 +35,7 @@ export default class Point {
     this._pointEditComponent = new PointEditView(point, this._offers, this._destinations);
 
     this._pointComponent.setClickHandler(this._handleClick);
-    this._pointEditComponent.setFavouriteClickHandler(this._handleFavouriteClick);
+    this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -124,8 +124,8 @@ export default class Point {
     }
   }
 
-  _handleFavouriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavourite: evt});
+  _handleFavoriteClick(evt, data) {
+    let updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,

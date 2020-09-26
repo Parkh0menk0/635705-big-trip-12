@@ -13,7 +13,7 @@ export const NEW_EVENT = {
   offers: [],
   startDate: null,
   endDate: null,
-  isFavourite: false
+  isFavorite: false
 };
 
 const createOffersSelectorTemplate = (offers) => {
@@ -143,7 +143,7 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
     offers,
     startDate,
     endDate,
-    isFavourite,
+    isFavorite,
   } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
@@ -199,7 +199,7 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       ${mode === Mode.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`}
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
       <label class="event__favorite-btn ${mode === Mode.CREATE ? `visually-hidden` : ``}" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -240,7 +240,7 @@ export default class Form extends SmartView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
-    this._favouriteClickHandler = this._favouriteClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
     this._destinationChoseHandler = this._destinationChoseHandler.bind(this);
@@ -305,7 +305,7 @@ export default class Form extends SmartView {
     this._setInnerHandlers();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setFavouriteClickHandler(this._callback.favouriteClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
@@ -429,9 +429,9 @@ export default class Form extends SmartView {
     this._callback.formSubmit(this._data);
   }
 
-  _favouriteClickHandler(evt) {
+  _favoriteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.favouriteClick(evt.target.checked, this._data);
+    this._callback.favoriteClick(evt.target.checked, this._data);
   }
 
   _formDeleteClickHandler(evt) {
@@ -444,9 +444,9 @@ export default class Form extends SmartView {
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  setFavouriteClickHandler(callback) {
-    this._callback.favouriteClick = callback;
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favouriteClickHandler);
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteClickHandler);
   }
 
   setDeleteClickHandler(callback) {
