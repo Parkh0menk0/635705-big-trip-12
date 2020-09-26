@@ -78,7 +78,21 @@ export const getRouteInfo = (events) => {
 };
 
 export const filter = {
-  [FilterType.EVERYTHING]: (events) => events,
-  [FilterType.FUTURE]: (events) => events.filter((event) => event.startDate > Date.now()),
-  [FilterType.PAST]: (events) => events.filter((event) => event.endDate < Date.now())
+  [FilterType.EVERYTHING]: (events) => {
+    return events;
+  },
+  [FilterType.PAST]: (events) => {
+    return events.filter((event) => {
+      const currentDay = moment();
+      const eventEndDate = moment(event.endDate);
+      return eventEndDate < currentDay;
+    });
+  },
+  [FilterType.FUTURE]: (events) => {
+    return events.filter((event) => {
+      const currentDay = moment();
+      const eventStartDate = moment(event.startDate);
+      return eventStartDate > currentDay;
+    });
+  }
 };
