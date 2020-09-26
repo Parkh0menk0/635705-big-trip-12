@@ -3,7 +3,7 @@ import DayListView from "../view/day-list.js";
 import DayView from "../view/day.js";
 import PointsListView from "../view/points-list.js";
 import NoPointsView from "../view/no-points.js";
-import Loading from "../view/loading.js";
+import LoadingView from "../view/loading.js";
 import PointPresenter from "./task.js";
 import PointNewPresenter from "./point-new.js";
 import {render, remove} from "../utils/render.js";
@@ -26,8 +26,8 @@ export default class Board {
 
     this._sortComponent = new SortView();
     this._noPointComponent = null;
-    this._pointsListComponent = new PointsListView();
-    this._loadingComponent = new Loading();
+    this._loadingComponent = new LoadingView();
+
 
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
