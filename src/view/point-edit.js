@@ -240,6 +240,7 @@ export default class Form extends SmartView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._rollupBtnClickHandler = this._rollupBtnClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
@@ -303,7 +304,7 @@ export default class Form extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
-
+    this.setRollupBtnClickHandler(this._callback.deleteClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
@@ -439,6 +440,11 @@ export default class Form extends SmartView {
     this._callback.deleteClick(this._data);
   }
 
+  _rollupBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.rollupBtnClick(this._data);
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
@@ -454,7 +460,8 @@ export default class Form extends SmartView {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
-  setCancelClickHandler(callback) {
-    this._callback.cancelClick = callback;
+  setRollupBtnClickHandler(callback) {
+    this._callback.rollupBtnClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._rollupBtnClickHandler);
   }
 }

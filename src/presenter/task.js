@@ -21,6 +21,7 @@ export default class Point {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleRollUpBtnClick = this._handleRollUpBtnClick.bind(this);
   }
 
   init(point, offers, destinations) {
@@ -35,6 +36,7 @@ export default class Point {
     this._pointEditComponent = new PointEditView(point, this._offers, this._destinations);
 
     this._pointComponent.setClickHandler(this._handleClick);
+    this._pointEditComponent.setRollupBtnClickHandler(this._handleRollUpBtnClick);
     this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
@@ -110,6 +112,14 @@ export default class Point {
   _handleDeleteClick(point) {
     this._changeData(
         UserAction.DELETE_POINT,
+        UpdateType.MINOR,
+        point
+    );
+  }
+
+  _handleRollUpBtnClick(point) {
+    this._changeData(
+        UserAction.UPDATE_POINT,
         UpdateType.MINOR,
         point
     );
