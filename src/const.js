@@ -6,15 +6,11 @@ export const SortType = {
   PRICE: `sort-price`
 };
 
-export const cities = [`Andorra la Vella`, `Athens`, `Belgrade`, `Berlin`, `Bern`, `Bratislava`, `Brussels`, `Bucharest`, `Budapest`,
-`Chisinau`, `Copenhagen`, `Dublin`, `Helsinki`, `Kiev`, `Lisbon`, `Ljubljana`, `London`, `Luxembourg`, `Madrid`, `Minsk`, `Monaco`,
-`Moscow`, `Nicosia`, `Nuuk`, `Oslo`, `Paris`, `Podgorica`, `Prague`, `Reykjavik`, `Riga`, `Rome`, `San Marino`, `Sarajevo`,
-`Skopje`, `Sofia`, `Stockholm`, `Tallinn`, `Tirana`, `Vaduz`, `Valletta`, `Vatican City`, `Vienna`, `Vilnius`, `Warsaw`, `Zagreb`];
-
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const UserAction = {

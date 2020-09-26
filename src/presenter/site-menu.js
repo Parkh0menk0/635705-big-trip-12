@@ -37,9 +37,9 @@ export default class SiteMenu {
         }
 
         this._statsComponent = new StatsView(this._pointsModel.getPoints());
+        this._pointPresenter.destroy();
         render(this._tripEventsContainer, this._statsComponent, RenderPosition.BEFOREEND);
         this._statsComponent.init();
-        this._pointPresenter.destroy();
         break;
       case MenuItem.TABLE:
         if (this._statsComponent) {
@@ -47,7 +47,12 @@ export default class SiteMenu {
           this._statsComponent = null;
         }
 
+        if (this._pointPresenter) {
+          this._pointPresenter.destroy();
+        }
+
         this._pointPresenter.init();
+
         break;
     }
   }

@@ -1,8 +1,9 @@
 import moment from "moment";
 import AbstractView from "./abstract.js";
+import {EVENT_ACTIVITIES} from '../const';
 import he from 'he';
 
-const createPoinTemplate = (event) => {
+export const createPoinTemplate = (event) => {
   const {type, destination, startDate, endDate, offers = [], cost} = event;
 
   const formatDate = (date) => {
@@ -38,12 +39,26 @@ const createPoinTemplate = (event) => {
       return (`<li class="event__offer"></li>`);
     } else {
       return offersToRender.map((item) => {
-        return (`
-          <li class="event__offer">
-            <span class="event__offer-title">${item.name}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${item.cost}</span>
-          </li>
-        `);
+        const offerCost = item.cost;
+        const offerName = item.name;
+        return (
+          `<li class="event__offer">
+            <span class="event__offer-title">${offerName}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${offerCost}</span>
+          </li>`
+        );
       }).join(``);
+    }
+  };
+
+  const selectedOffersToRender = offers.filter((offer) => offer.isChecked).slice(0, 3);
+
+  const selectedOffersTemplate = createSelectedOffersTemplate(selectedOffersToRender);
+
+  const getEventTitle = () => {
+    if (EVENT_ACTIVITIES.map((evt) => evt.toLowerCase()).includes(type.toLowerCase())) {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} in ${he.encode(destination)}`;
+    } else {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} to ${he.encode(destination)}`;
     }
   };
 
@@ -53,7 +68,7 @@ const createPoinTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} to ${he.encode(destination)}</h3>
+        <h3 class="event__title">${getEventTitle()}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -70,7 +85,7 @@ const createPoinTemplate = (event) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${createSelectedOffersTemplate(offers.slice(0, 3))}
+          ${selectedOffersTemplate}
         </ul>
 
         <button class="event__rollup-btn" type="button">

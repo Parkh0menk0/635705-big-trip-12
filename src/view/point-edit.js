@@ -1,10 +1,9 @@
-import {EVENT_TYPES, EVENT_VEHICLES, EVENT_ACTIVITIES, cities, Mode} from "../const.js";
+import {EVENT_TYPES, EVENT_VEHICLES, EVENT_ACTIVITIES, Mode} from "../const.js";
 import moment from "moment";
 import SmartView from "./smart.js";
-import {generateOffers, generateDescriptions} from "../mock/events.js";
 import flatpickr from "flatpickr";
-import he from 'he';
-import {cloneDeep} from '../utils/common';
+import he from "he";
+import {cloneDeep} from "../utils/common";
 
 export const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -14,7 +13,7 @@ export const NEW_EVENT = {
   offers: [],
   startDate: null,
   endDate: null,
-  isFavourite: false
+  isFavorite: false
 };
 
 const createOffersSelectorTemplate = (offers) => {
@@ -23,15 +22,15 @@ const createOffersSelectorTemplate = (offers) => {
   }
 
   const createOfferTemplate = () => {
-    return offers.map(({name, cost, isChecked}) => {
-      const offerName = name.toLowerCase().replace(/ /g, `_`);
+    return offers.map((offer) => {
+      const offerName = offer.name.toLowerCase().replace(/ /g, `_`);
       return (
         `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}" type="checkbox" name="event-offer-${offerName}" ${isChecked ? `checked` : ``} value="${offerName}">
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}" type="checkbox" name="event-offer-${offerName}" ${offer.isChecked ? `checked` : ``} value="${offerName}">
           <label class="event__offer-label" for="event-offer-${offerName}">
-            <span class="event__offer-title">${name}</span>
+            <span class="event__offer-title">${offer.name}</span>
             &plus;
-            &euro;&nbsp;<span class="event__offer-price">${cost}</span>
+            &euro;&nbsp;<span class="event__offer-price">${offer.cost}</span>
           </label>
         </div>`
       );
@@ -51,18 +50,14 @@ const createOffersSelectorTemplate = (offers) => {
 };
 
 const createDestinationTemplate = (destinationInfo) => {
-  const {description, pictures} = destinationInfo;
-
-  if (description === null && pictures.length === 0) {
-    return ``;
+  if (destinationInfo === null) {
+    return false;
   }
 
+  const {description, pictures} = destinationInfo;
+
   const photosTemplate = () => {
-    return pictures.map((picture) => {
-      return (
-        `<img class="event__photo" src="${picture}" alt="Event photo">`
-      );
-    }).join(` `);
+    return pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`).join(` `);
   };
 
   const photosList = photosTemplate(pictures);
@@ -93,8 +88,8 @@ const createEventDetailsTemplate = (offers = [], destinationInfo = null) => {
 
   return (
     `<section class="event__details">
-      ${offersSelectorTemplate}
-      ${descriptionTemplate}
+      ${offersSelectorTemplate ? offersSelectorTemplate : ``}
+      ${descriptionTemplate ? descriptionTemplate : ``}
     </section>`
   );
 };
@@ -103,7 +98,7 @@ const createEventSelectorTemplate = (type) => {
   const createElementListTemplate = (event) => {
     return (
       `<div class="event__type-item">
-        <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event === type ? `checked` : ``}>
+        <input id="event-type-${event.toLowerCase()}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${event.toLowerCase()}" ${event.toLowerCase() === type ? `checked` : ``}>
         <label class="event__type-label  event__type-label--${event.toLowerCase()}" for="event-type-${event.toLowerCase()}">${event}</label>
       </div>
       `
@@ -131,15 +126,15 @@ const createEventSelectorTemplate = (type) => {
   </div>`);
 };
 
-const createDestinationList = () => {
-  return cities.map((city) => {
+const createDestinationList = (destinations) => {
+  return destinations.map((destination) => {
     return (`
-      <option value="${city}"></option>
+      <option value="${destination.name}"></option>
     `);
   }).join(` `);
 };
 
-export const createTripEventItemEditTemplate = (data = {}, mode) => {
+export const createTripEventItemEditTemplate = (data = {}, destinations, mode) => {
   const {
     type,
     destination,
@@ -148,17 +143,21 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
     offers,
     startDate,
     endDate,
-    isFavourite,
+    isFavorite,
   } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
   const eventDetailsTemplate = createEventDetailsTemplate(offers, destinationInfo);
-  const destinationList = createDestinationList();
+  const destinationList = createDestinationList(destinations);
   const startDateFormated = startDate ? moment(startDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
   const endDateFormated = endDate ? moment(endDate).format(`DD/MM/YY hh:mm`) : moment().format(`DD/MM/YY hh:mm`);
 
   const placeholder = () => {
-    return EVENT_ACTIVITIES.map((event) => event.toLowerCase()).includes(type) ? `${type} in` : `${type} to`;
+    if (EVENT_ACTIVITIES.map((event) => event.toLowerCase()).includes(type.toLowerCase())) {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} in`;
+    } else {
+      return `${type.charAt(0).toUpperCase() + type.slice(1)} to`;
+    }
   };
 
   return (`<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -200,7 +199,7 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       ${mode === Mode.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`}
 
-      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite ? `checked` : ``}>
+      <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
       <label class="event__favorite-btn ${mode === Mode.CREATE ? `visually-hidden` : ``}" for="event-favorite-1">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -218,9 +217,13 @@ export const createTripEventItemEditTemplate = (data = {}, mode) => {
 };
 
 export default class Form extends SmartView {
-  constructor(event, mode) {
+  constructor(event, offers, destinations, mode) {
     super();
     this._event = event || NEW_EVENT;
+    this._offers = offers;
+    this._destinations = destinations;
+    this._cities = this._destinations.map((destination) => destination.name);
+
     this._mode = mode || Mode.EDIT;
 
     this._data = cloneDeep(this._event);
@@ -237,7 +240,7 @@ export default class Form extends SmartView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
-    this._favouriteClickHandler = this._favouriteClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
     this._destinationChoseHandler = this._destinationChoseHandler.bind(this);
@@ -302,7 +305,7 @@ export default class Form extends SmartView {
     this._setInnerHandlers();
 
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setFavouriteClickHandler(this._callback.favouriteClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
@@ -318,7 +321,7 @@ export default class Form extends SmartView {
   _isValidDestination() {
     const destinationSelector = this.getElement().querySelector(`.event__input--destination`);
 
-    if (destinationSelector.value === `` || !cities.map((city) => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
+    if (destinationSelector.value === `` || !this._cities.map((city) => city.toLowerCase()).includes(destinationSelector.value.toLowerCase())) {
       return false;
     }
 
@@ -388,21 +391,14 @@ export default class Form extends SmartView {
       .map((eventType) => eventType.toLowerCase())
       .indexOf(updatedType);
 
-    const AllOffers = generateOffers();
-    const typeOffers = [];
-
-    const findOfferIndex = Array.from(AllOffers.keys())
-      .map((offerType) => offerType.toLowerCase())
-      .indexOf(updatedType);
-
-    if (findOfferIndex > -1) {
-      typeOffers.push(...AllOffers.get(Array.from(AllOffers.keys())[findOfferIndex]));
-    }
+    const typeOffers = this._offers
+      .filter((offerType) => offerType.type.toLowerCase() === updatedType.toLowerCase());
 
     this.updateData({
       type: EVENT_TYPES[findEventTypeIndex],
-      offers: typeOffers
+      offers: typeOffers[0].offers
     });
+    this._validateForm();
   }
 
   reset(event) {
@@ -411,18 +407,18 @@ export default class Form extends SmartView {
 
   _destinationChoseHandler(evt) {
     const selectedCity = evt.target.value;
-    const findIndex = cities.indexOf(selectedCity);
+    const findIndex = this._cities.indexOf(selectedCity);
     if (findIndex > -1) {
       this.updateData({
         destination: selectedCity,
-        destinationInfo: generateDescriptions().get(selectedCity)
+        destinationInfo: this._destinations[findIndex]
       });
     }
     this._validateForm();
   }
 
   getTemplate() {
-    return createTripEventItemEditTemplate(this._data, this._mode);
+    return createTripEventItemEditTemplate(this._data, this._destinations, this._mode);
   }
 
   _formSubmitHandler(evt) {
@@ -433,9 +429,9 @@ export default class Form extends SmartView {
     this._callback.formSubmit(this._data);
   }
 
-  _favouriteClickHandler(evt) {
+  _favoriteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.favouriteClick(evt.target.checked, this._data);
+    this._callback.favoriteClick(evt.target.checked, this._data);
   }
 
   _formDeleteClickHandler(evt) {
@@ -448,9 +444,9 @@ export default class Form extends SmartView {
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  setFavouriteClickHandler(callback) {
-    this._callback.favouriteClick = callback;
-    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favouriteClickHandler);
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteClickHandler);
   }
 
   setDeleteClickHandler(callback) {

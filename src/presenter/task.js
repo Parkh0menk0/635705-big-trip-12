@@ -4,7 +4,7 @@ import {render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType, ESC_KEY, Mode} from "../const.js";
 
 export default class Point {
-  constructor(pointListContainer, changeData, changeMode) {
+  constructor(pointListContainer, changeData, changeMode, offersModel, destinationsModel) {
     this._pointListContainer = pointListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
@@ -13,24 +13,29 @@ export default class Point {
     this._pointEditComponent = null;
     this._mode = Mode.DEFAULT;
 
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+
     this._handleClick = this._handleClick.bind(this);
-    this._handleFavouriteClick = this._handleFavouriteClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(point) {
+  init(point, offers, destinations) {
     this._point = point;
+    this._offers = offers;
+    this._destinations = destinations;
 
     const prevPointComponent = this._pointComponent;
     const prevPointEditComponent = this._pointEditComponent;
 
-    this._pointComponent = new PoinView(point);
-    this._pointEditComponent = new PointEditView(point);
+    this._pointComponent = new PoinView(point, this._offers, this._destinations);
+    this._pointEditComponent = new PointEditView(point, this._offers, this._destinations);
 
     this._pointComponent.setClickHandler(this._handleClick);
-    this._pointEditComponent.setFavouriteClickHandler(this._handleFavouriteClick);
+    this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -119,8 +124,8 @@ export default class Point {
     }
   }
 
-  _handleFavouriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavourite: evt});
+  _handleFavoriteClick(evt, data) {
+    let updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,

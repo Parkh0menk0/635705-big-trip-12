@@ -1,7 +1,6 @@
-import {render, RenderPosition, remove} from '../utils/render';
-import RouteInfoView from '../view/route-info';
-import {groupByDay} from '../utils/task';
-import {getRouteInfo} from '../utils/task';
+import {render, RenderPosition, remove} from "../utils/render.js";
+import RouteInfoView from "../view/route-info.js";
+import {groupByDay, getRouteInfo} from "../utils/task.js";
 
 export default class BoardInfo {
   constructor(headerContainer, pointsModel) {

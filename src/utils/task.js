@@ -3,9 +3,29 @@ import {groupBy} from "./common.js";
 import {FilterType} from "../const.js";
 
 export const groupByDay = (events) => {
-  return groupBy(events.slice().sort((pointA, pointB) => pointA.endDate > pointB.startDate), (item) => {
+  const sortedDates = events.slice();
+
+  sortedDates
+    .sort((event, event2) => {
+      const date1 = event.endDate;
+      const date2 = event2.startDate;
+
+      if (date1 > date2) {
+        return 1;
+      }
+
+      if (date1 < date2) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+  const groupedByDates = groupBy(sortedDates, (item) => {
     return moment(item.startDate).startOf(`day`).format();
   });
+
+  return groupedByDates;
 };
 
 export const sortByDuration = (pointA, pointB) => {
@@ -41,7 +61,6 @@ export const getRouteInfo = (events) => {
   };
 
   const getTotalCost = () => {
-    // return Object.values(events).reduce((points, point) => points.concat(point)).map((point) => point.cost).reduce((total, amount) => total + amount);
     const totalCost = Object.values(events).reduce((total, amount) => {
       const totalCostyDay = amount.reduce((totalByDay, amountByDay) => {
         return totalByDay + amountByDay.cost;
@@ -59,7 +78,21 @@ export const getRouteInfo = (events) => {
 };
 
 export const filter = {
-  [FilterType.EVERYTHING]: (events) => events,
-  [FilterType.FUTURE]: (events) => events.filter((event) => event.startDate > Date.now()),
-  [FilterType.PAST]: (events) => events.filter((event) => event.endDate < Date.now())
+  [FilterType.EVERYTHING]: (events) => {
+    return events;
+  },
+  [FilterType.PAST]: (events) => {
+    return events.filter((event) => {
+      const currentDay = moment();
+      const eventEndDate = moment(event.endDate);
+      return eventEndDate < currentDay;
+    });
+  },
+  [FilterType.FUTURE]: (events) => {
+    return events.filter((event) => {
+      const currentDay = moment();
+      const eventStartDate = moment(event.startDate);
+      return eventStartDate > currentDay;
+    });
+  }
 };
