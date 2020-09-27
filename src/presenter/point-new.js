@@ -40,6 +40,54 @@ export default class PointNew {
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._pointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case STATE.SAVING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case STATE.DELETING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case STATE.ABORTING:
+        this._pointComponent.shake(resetFormState);
+        this._pointEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
+  // setAborting() {
+  //   const resetFormState = () => {
+  //     this._pointEditComponent.updateData({
+  //       isDisabled: false,
+  //       isSaving: false,
+  //       isDeleting: false
+  //     });
+  //   };
+
+  //   this._pointEditComponent.shake(resetFormState);
+  // }
+
   resetView() {
     remove(this._pointEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
@@ -59,7 +107,6 @@ export default class PointNew {
         updateType,
         point
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
@@ -78,7 +125,7 @@ export default class PointNew {
   _isFavoriteClick(evt, data) {
     let updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
-        UserAction.UPDATE_POINT,
+      UserAction.UPDATE_POINT,
         UpdateType.PATCH,
         updated
     );

@@ -1,7 +1,7 @@
 import PointEditView from "../view/point-edit.js";
 import PoinView from "../view/poin.js";
 import {render, replace, remove} from "../utils/render.js";
-import {UserAction, UpdateType, ESC_KEY, Mode} from "../const.js";
+import {UserAction, UpdateType, ESC_KEY, Mode, STATE} from "../const.js";
 
 export default class Point {
   constructor(pointListContainer, changeData, changeMode, offersModel, destinationsModel) {
@@ -17,7 +17,7 @@ export default class Point {
     this._destinationsModel = destinationsModel;
 
     this._handleClick = this._handleClick.bind(this);
-    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._isFavoriteClick = this._isFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -37,7 +37,7 @@ export default class Point {
 
     this._pointComponent.setClickHandler(this._handleClick);
     this._pointEditComponent.setRollupBtnClickHandler(this._handleRollUpBtnClick);
-    this._pointEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._pointEditComponent.setFavoriteClickHandler(this._isFavoriteClick);
     this._pointEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -52,6 +52,7 @@ export default class Point {
 
     if (this._mode === Mode.EDIT) {
       replace(this._pointEditComponent, prevPointEditComponent);
+      this._mode = Mode.EDIT;
     }
 
     remove(prevPointComponent);
@@ -68,6 +69,35 @@ export default class Point {
     remove(this._pointComponent);
     remove(this._pointEditComponent);
     remove(this._pointListContainer);
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case STATE.SAVING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case STATE.DELETING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case STATE.ABORTING:
+        this._pointComponent.shake(resetFormState);
+        this._pointEditComponent.shake(resetFormState);
+        break;
+    }
   }
 
   _replaceEventToForm() {
@@ -101,7 +131,6 @@ export default class Point {
       updateType = UpdateType.MINOR;
     }
 
-    this._replaceFormToEvent();
     this._changeData(
         UserAction.UPDATE_POINT,
         updateType,
@@ -134,7 +163,7 @@ export default class Point {
     }
   }
 
-  _handleFavoriteClick(evt, data) {
+  _isFavoriteClick(evt, data) {
     let updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,

@@ -38,7 +38,7 @@ export default class SiteMenu {
 
         this._statsComponent = new StatsView(this._pointsModel.getPoints());
         this._pointPresenter.destroy();
-        render(this._tripEventsContainer, this._statsComponent, RenderPosition.BEFOREEND);
+        render(this._tripEventsContainer, this._statsComponent);
         this._statsComponent.init();
         break;
       case MenuItem.TABLE:
