@@ -7,7 +7,7 @@ import LoadingView from "../view/loading.js";
 import PointPresenter from "./task.js";
 import PointNewPresenter from "./point-new.js";
 import {render, remove} from "../utils/render.js";
-import {SortType, UpdateType, UserAction, FilterType} from "../const.js";
+import {SortType, UserAction, UpdateType, FilterType, STATE} from "../const.js";
 import {groupByDay, sortByDuration, sortByPrice, filter} from "../utils/task.js";
 
 export default class Board {
@@ -29,11 +29,11 @@ export default class Board {
     this._loadingComponent = new LoadingView();
 
 
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._sortChangeHandler = this._sortChangeHandler.bind(this);
+
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelPointsChange = this._handleModelPointsChange.bind(this);
-    this._filterModel.addObserver(this._handleModelPointsChange);
 
     this._pointNewPresenter = new PointNewPresenter(this._boardContainer, this._handleViewAction, this._handleModeChange);
   }
@@ -42,6 +42,8 @@ export default class Board {
     this._renderBoard();
 
     this._pointsModel.addObserver(this._handleModelPointsChange);
+    this._filterModel.addObserver(this._handleModelPointsChange);
+
   }
 
   destroy() {
@@ -71,8 +73,6 @@ export default class Board {
 
     const newPointPresenter = this._pointNewPresenter;
     newPointPresenter.init(events, offers, destinations, callback);
-
-    this._pointPresenter[`0`] = newPointPresenter;
   }
 
   _getPoints() {
@@ -102,18 +102,33 @@ export default class Board {
   _handleViewAction(actionType, updateType, updatedPoint) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._api.updatePoint(updatedPoint).then((response) => {
-          this._pointsModel.updatePoint(updateType, response);
-        });
+        this._pointPresenter[updatedPoint.id].setViewState(STATE.SAVING);
+        this._api.updatePoint(updatedPoint)
+          .then((response) => {
+            this._pointsModel.updatePoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointPresenter[updatedPoint.id].setViewState(STATE.ABORTING);
+          });
         break;
       case UserAction.ADD_POINT:
-        this._api.addPoint(updatedPoint).then((response) => {
-          this._pointsModel.addPoint(updateType, response);
-        });
+        this._pointNewPresenter.setSaving();
+        this._api.addPoint(updatedPoint)
+          .then((response) => {
+            this._pointsModel.addPoint(updateType, response);
+          })
+          .catch(() => {
+            this._pointNewPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_POINT:
-        this._api.deletePoint(updatedPoint).then(() => {
+        this._pointPresenter[updatedPoint.id].setViewState(STATE.DELETING);
+        this._api.deletePoint(updatedPoint)
+        .then(() => {
           this._pointsModel.deletePoint(updateType, updatedPoint);
+        })
+        .catch(() => {
+          this._pointPresenter[updatedPoint.id].setViewState(STATE.ABORTING);
         });
         break;
     }
@@ -138,7 +153,7 @@ export default class Board {
     }
   }
 
-  _handleSortTypeChange(event) {
+  _sortChangeHandler(event) {
     this._currentSortType = event;
     this._clearPoints();
     this._renderBoard();
@@ -155,7 +170,7 @@ export default class Board {
 
   _renderSort() {
     render(this._boardContainer, this._sortComponent);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    this._sortComponent.setSortTypeChangeHandler(this._sortChangeHandler);
   }
 
   _renderNoPoints() {
