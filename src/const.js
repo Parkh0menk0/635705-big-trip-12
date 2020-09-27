@@ -40,3 +40,8 @@ export const MenuItem = {
   STATISTIC: `STATISTIC`,
 };
 
+export const STATE = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`,
+  ABORTING: `ABORTING`
+}
