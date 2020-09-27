@@ -29,8 +29,7 @@ export default class Board {
     this._loadingComponent = new LoadingView();
 
 
-    this._sortChangeHandler = this._sortChangeHandler.bind(this);
-
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelPointsChange = this._handleModelPointsChange.bind(this);
@@ -154,7 +153,7 @@ export default class Board {
     }
   }
 
-  _sortChangeHandler(event) {
+  _handleSortTypeChange(event) {
     this._currentSortType = event;
     this._clearPoints();
     this._renderBoard();
@@ -171,7 +170,7 @@ export default class Board {
 
   _renderSort() {
     render(this._boardContainer, this._sortComponent);
-    this._sortComponent.setSortTypeChangeHandler(this._sortChangeHandler);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderNoPoints() {
