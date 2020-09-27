@@ -333,7 +333,7 @@ export default class Form extends SmartView {
     const start = moment(this._startDate);
     const end = moment(this._endDate);
 
-    if ((start.isSame(end)) || (start.isAfter(end))) {
+    if (start.isAfter(end, 'day')) {
       return false;
     }
     return true;
