@@ -100,7 +100,7 @@ export default class PointNew {
   }
 
   _handleFormSubmit(point) {
-    let updateType = UpdateType.MINOR;
+    const updateType = UpdateType.MINOR;
 
     this._changeData(
         UserAction.ADD_POINT,
@@ -123,7 +123,7 @@ export default class PointNew {
   }
 
   _isFavoriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavorite: evt});
+    const updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,

@@ -164,7 +164,7 @@ export default class Point {
   }
 
   _isFavoriteClick(evt, data) {
-    let updated = Object.assign({}, data, {isFavorite: evt});
+    const updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,
