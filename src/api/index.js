@@ -1,5 +1,5 @@
-import PointsModel from "./model/points.js";
-import OffersModel from "./model/offers";
+import PointsModel from "../model/points.js";
+import OffersModel from "../model/offers";
 
 const Method = {
   GET: `GET`,
@@ -52,9 +52,7 @@ export default class Api {
       })
     })
       .then(Api.toJSON)
-      .then((value) => {
-        return PointsModel.adaptToClient(value);
-      });
+      .then((updatedPoint) => PointsModel.adaptToClient(updatedPoint));
   }
 
   addPoint(point) {
@@ -65,9 +63,7 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((value) => {
-        return PointsModel.adaptToClient(value);
-      });
+      .then((newPoint) => PointsModel.adaptToClient(newPoint));
   }
 
   deletePoint(point) {
@@ -94,6 +90,16 @@ export default class Api {
     )
       .then(Api.checkStatus)
       .catch(Api.catchError);
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   static checkStatus(response) {
