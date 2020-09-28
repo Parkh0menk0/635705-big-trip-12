@@ -52,8 +52,8 @@ export default class Api {
       })
     })
       .then(Api.toJSON)
-      .then(() => {
-        return PointsModel.adaptToClient(point);
+      .then((value) => {
+        return PointsModel.adaptToClient(value);
       });
   }
 
@@ -65,8 +65,8 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then(() => {
-        return PointsModel.adaptToClient(point);
+      .then((value) => {
+        return PointsModel.adaptToClient(value);
       });
   }
 
