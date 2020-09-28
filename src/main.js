@@ -37,23 +37,23 @@ const tripEventsContainerElement = mainContentContainerElemant.querySelector(`.t
 
 const boardInfoPresenter = new BoardInfoPresenter(tripMain, pointsModel);
 const boardPresenter = new BoardPresenter(tripEventsContainerElement, pointsModel, filtersModel, destinationsModel, offersModel, api);
-const siteMenuPresenter =  new SiteMenuPresenter(tripControsElements[0], tripEventsContainerElement, boardPresenter, pointsModel);
-const filterPresenter =  new FilterPresenter(tripControsElements[1], filtersModel, pointsModel);
+const siteMenuPresenter = new SiteMenuPresenter(tripControsElements[0], tripEventsContainerElement, boardPresenter, pointsModel);
+const filterPresenter = new FilterPresenter(tripControsElements[1], filtersModel, pointsModel);
 
 boardInfoPresenter.init();
 siteMenuPresenter.init();
 boardPresenter.init();
 filterPresenter.init();
 
-const newPointFormCloseHandler = (evt) => {
+const newPointFormCloseHandler = () => {
   addNewPointButton.removeAttribute(`disabled`);
-}
+};
 
 addNewPointButton.addEventListener(`click`, (evt) => {
   evt.preventDefault();
   boardPresenter.createPoint(newPointFormCloseHandler);
   addNewPointButton.setAttribute(`disabled`, `disabled`);
-})
+});
 
 api.getPoints().then((points) => {
   pointsModel.setPoints(UpdateType.INIT, points);
