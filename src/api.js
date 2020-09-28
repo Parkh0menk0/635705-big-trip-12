@@ -25,21 +25,21 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then((points) => {
-        return points.map(point => PointsModel.adaptToClient(point))
-      })
+        return points.map((point) => PointsModel.adaptToClient(point));
+      });
   }
 
   getDestinations() {
     return this._load({url: `destinations`})
-      .then(Api.toJSON)
+      .then(Api.toJSON);
   }
 
   getOffers() {
     return this._load({url: `offers`})
       .then(Api.toJSON)
       .then((offers) => {
-        return offers.map(offer => OffersModel.adaptToClient(offer))
-      })
+        return offers.map((offer) => OffersModel.adaptToClient(offer));
+      });
   }
 
   updatePoint(point) {
@@ -52,9 +52,9 @@ export default class Api {
       })
     })
       .then(Api.toJSON)
-      .then((point) => {
-        return PointsModel.adaptToClient(point);
-      })
+      .then((value) => {
+        return PointsModel.adaptToClient(value);
+      });
   }
 
   addPoint(point) {
@@ -65,9 +65,9 @@ export default class Api {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON)
-      .then((point) => {
-        return PointsModel.adaptToClient(point);
-      })
+      .then((value) => {
+        return PointsModel.adaptToClient(value);
+      });
   }
 
   deletePoint(point) {

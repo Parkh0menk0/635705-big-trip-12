@@ -44,4 +44,4 @@ export const STATE = {
   SAVING: `SAVING`,
   DELETING: `DELETING`,
   ABORTING: `ABORTING`
-}
+};

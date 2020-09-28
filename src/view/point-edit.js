@@ -485,7 +485,7 @@ export default class Form extends SmartView {
 
   setRollupBtnClickHandler(callback) {
     this._callback.rollupBtnClick = callback;
-    let rollupBtn = this.getElement().querySelector(`.event__rollup-btn`);
+    const rollupBtn = this.getElement().querySelector(`.event__rollup-btn`);
     if (rollupBtn) {
       rollupBtn.addEventListener(`click`, this._rollupBtnClickHandler);
     }
