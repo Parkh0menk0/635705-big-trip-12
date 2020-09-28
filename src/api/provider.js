@@ -1,15 +1,6 @@
 import {nanoid} from "nanoid";
 import PointsModel from "../model/points.js";
 
-const STORE_VER = `v12`;
-const STORE_PREFIX = `bigtrip-localstorage`;
-
-export const STORAGE_KEYS = {
-  POINTS: `${STORE_PREFIX}-points-${STORE_VER}`,
-  OFFERS: `${STORE_PREFIX}-offers-${STORE_VER}`,
-  DESTIATIONS: `${STORE_PREFIX}-destinations-${STORE_VER}`,
-};
-
 const getSyncedPoints = (items) => {
   return items.filter(({success}) => success)
     .map(({payload}) => payload.point);
@@ -34,12 +25,12 @@ export default class Provider {
       return this._api.getPoints()
         .then((points) => {
           const items = createStoreStructure(points.map(PointsModel.adaptToServer));
-          this._store.setItems(STORAGE_KEYS.POINTS, items);
+          this._store.setItems(items);
           return points;
         });
     }
 
-    const storePoints = Object.values(this._store.getItems(STORAGE_KEYS.POINTS));
+    const storePoints = Object.values(this._store.getItems());
 
     return Promise.resolve(storePoints.map(PointsModel.adaptToClient));
   }
@@ -53,7 +44,7 @@ export default class Provider {
         });
     }
 
-    this._store.setItem(STORAGE_KEYS.POINTS, point.id, PointsModel.adaptToServer(Object.assign({}, point)));
+    this._store.setItem(point.id, PointsModel.adaptToServer(Object.assign({}, point)));
 
     return Promise.resolve(point);
   }
@@ -66,55 +57,29 @@ export default class Provider {
           return newPoint;
         });
     }
-    const localNewEventId = nanoid();
-    const localNewEvent = Object.assign({}, point, {id: localNewEventId});
 
-    this._store.setItem(STORAGE_KEYS.POINTS, localNewEvent.id, PointsModel.adaptToServer(localNewEvent));
+    const localNewPointId = nanoid();
+    const localNewPoint = Object.assign({}, point, {id: localNewPointId});
 
-    return Promise.resolve(localNewEvent);
+    this._store.setItem(localNewPoint.id, PointsModel.adaptToServer(localNewPoint));
+
+    return Promise.resolve(localNewPoint);
   }
 
   deletePoint(point) {
     if (Provider.isOnline()) {
       return this._api.deletePoint(point)
-        .then(() => this._store.removeItem(STORAGE_KEYS.POINTS, point.id));
-    }
-    this._store.removeItem(STORAGE_KEYS.POINTS, point.id);
-
-    return Promise.resolve(point);
-  }
-
-  getDestinations() {
-    if (Provider.isOnline()) {
-      return this._api.getDestinations()
-        .then((destinations) => {
-          this._store.setItems(STORAGE_KEYS.DESTIATIONS, destinations);
-          return destinations;
-        });
+        .then(() => this._store.removeItem(point.id));
     }
 
-    const storeDestinations = Object.values(this._store.getItems(STORAGE_KEYS.DESTIATIONS));
+    this._store.removeItem(point.id);
 
-    return Promise.resolve(storeDestinations);
-  }
-
-  getOffers() {
-    if (Provider.isOnline()) {
-      return this._api.getOffers()
-        .then((offers) => {
-          this._store.setItems(STORAGE_KEYS.OFFERS, offers);
-          return offers;
-        });
-    }
-
-    const storeOffers = Object.values(this._store.getItems(STORAGE_KEYS.OFFERS));
-
-    return Promise.resolve(storeOffers);
+    return Promise.resolve();
   }
 
   sync() {
     if (Provider.isOnline()) {
-      const storePoints = Object.values(this._store.getItems(STORAGE_KEYS.POINTS));
+      const storePoints = Object.values(this._store.getItems());
 
       return this._api.sync(storePoints)
         .then((response) => {
