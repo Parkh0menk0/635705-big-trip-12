@@ -1,7 +1,7 @@
 import {render, RenderPosition, remove} from "../utils/render.js";
 import {NEW_EVENT} from "../view/point-edit.js";
 import PointEditView from "../view/point-edit.js";
-import {UserAction, UpdateType, ESC_KEY, Mode} from "../const.js";
+import {UserAction, UpdateType, ESC_KEY, Mode, STATE} from "../const.js";
 
 export default class PointNew {
   constructor(pointListContainer, changeData, changeMode) {
@@ -40,6 +40,54 @@ export default class PointNew {
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._pointEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._pointEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    switch (state) {
+      case STATE.SAVING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case STATE.DELETING:
+        this._pointEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
+      case STATE.ABORTING:
+        this._pointComponent.shake(resetFormState);
+        this._pointEditComponent.shake(resetFormState);
+        break;
+    }
+  }
+
+  // setAborting() {
+  //   const resetFormState = () => {
+  //     this._pointEditComponent.updateData({
+  //       isDisabled: false,
+  //       isSaving: false,
+  //       isDeleting: false
+  //     });
+  //   };
+
+  //   this._pointEditComponent.shake(resetFormState);
+  // }
+
   resetView() {
     remove(this._pointEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
@@ -59,7 +107,6 @@ export default class PointNew {
         updateType,
         point
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {

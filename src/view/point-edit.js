@@ -3,7 +3,7 @@ import moment from "moment";
 import SmartView from "./smart.js";
 import flatpickr from "flatpickr";
 import he from "he";
-import {cloneDeep} from "../utils/common";
+import {cloneDeep} from '../utils/common';
 
 export const NEW_EVENT = {
   type: EVENT_TYPES[0],
@@ -144,6 +144,9 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
     startDate,
     endDate,
     isFavorite,
+    isDisabled,
+    isSaving,
+    isDeleting
   } = data;
 
   const eventSelectorTemplate = createEventSelectorTemplate(type);
@@ -180,12 +183,12 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
         <label class="visually-hidden" for="event-start-time-1">
           From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateFormated}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateFormated}" ${isDisabled ? `disabled` : ``}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
           To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateFormated}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateFormated}" ${isDisabled ? `disabled` : ``}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -193,11 +196,11 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${cost}">
+        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${cost}" ${isDisabled ? `disabled` : ``}>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      ${mode === Mode.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn">Delete</button>`}
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? `disabled` : ``}>${isSaving ? `Saving...` : `Save`}</button>
+      ${mode === Mode.CREATE ? `<button class="event__reset-btn" type="reset">Cancel</button>` : `<button class="event__reset-btn" ${isDisabled ? `disabled` : ``}>${isDeleting ? `Deleting...` : `Delete`}</button>`}
 
       <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
       <label class="event__favorite-btn ${mode === Mode.CREATE ? `visually-hidden` : ``}" for="event-favorite-1">
@@ -207,9 +210,8 @@ export const createTripEventItemEditTemplate = (data = {}, destinations, mode) =
         </svg>
       </label>
 
-      <button class="event__rollup-btn" type="button">
-        <span class="visually-hidden">Open event</span>
-      </button>
+      ${mode === Mode.CREATE ? `` : `<button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>`}
+
     </header>
     ${eventDetailsTemplate}
   </form>`
@@ -226,7 +228,7 @@ export default class Form extends SmartView {
 
     this._mode = mode || Mode.EDIT;
 
-    this._data = cloneDeep(this._event);
+    this._data = Form.parseEventToData(this._event);
 
     this._datepickerStart = null;
     this._datepickerEnd = null;
@@ -240,6 +242,7 @@ export default class Form extends SmartView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._rollupBtnClickHandler = this._rollupBtnClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._eventTypeChangeHandler = this._eventTypeChangeHandler.bind(this);
     this._offersSelectorHandler = this._offersSelectorHandler.bind(this);
@@ -303,7 +306,7 @@ export default class Form extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
-
+    this.setRollupBtnClickHandler(this._callback.deleteClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
@@ -332,7 +335,7 @@ export default class Form extends SmartView {
     const start = moment(this._startDate);
     const end = moment(this._endDate);
 
-    if ((start.isSame(end)) || (start.isAfter(end))) {
+    if (start.isAfter(end, `day`)) {
       return false;
     }
     return true;
@@ -402,7 +405,7 @@ export default class Form extends SmartView {
   }
 
   reset(event) {
-    this.updateData(event);
+    this.updateData(Form.parseEventToData(event));
   }
 
   _destinationChoseHandler(evt) {
@@ -426,7 +429,7 @@ export default class Form extends SmartView {
     this._data.endDate = this._endDate;
     this._cost = this._cost;
     evt.preventDefault();
-    this._callback.formSubmit(this._data);
+    this._callback.formSubmit(Form.parseDataToEvent(this._data));
   }
 
   _favoriteClickHandler(evt) {
@@ -439,9 +442,35 @@ export default class Form extends SmartView {
     this._callback.deleteClick(this._data);
   }
 
+  _rollupBtnClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.rollupBtnClick(this._data);
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
+  }
+
+  static parseEventToData(event) {
+    return Object.assign(
+        {},
+        event,
+        {
+          isDisabled: false,
+          isSaving: false,
+          isDeleting: false
+        });
   }
 
   setFavoriteClickHandler(callback) {
@@ -454,7 +483,11 @@ export default class Form extends SmartView {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
   }
 
-  setCancelClickHandler(callback) {
-    this._callback.cancelClick = callback;
+  setRollupBtnClickHandler(callback) {
+    this._callback.rollupBtnClick = callback;
+    let rollupBtn = this.getElement().querySelector(`.event__rollup-btn`);
+    if (rollupBtn) {
+      rollupBtn.addEventListener(`click`, this._rollupBtnClickHandler);
+    }
   }
 }

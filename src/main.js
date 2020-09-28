@@ -14,7 +14,7 @@ import {UpdateType} from "./const";
 
 import Api from "./api.js";
 
-const AUTHORIZATION = `Basic hS2sd3dfSwcl1sa2j`;
+const AUTHORIZATION = `Basic mnbvcxzlkjhgfdsap`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
