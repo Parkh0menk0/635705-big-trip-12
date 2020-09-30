@@ -23,7 +23,7 @@ export const createPoinTemplate = (event) => {
 
     let resultString = ``;
 
-    for (const part of dateParts) {
+    for (let part of dateParts) {
       if (duration[part]() !== 0) {
         resultString = resultString.concat(`${duration[part]()}${(part.substring(0, 1)).toUpperCase()} `);
       }

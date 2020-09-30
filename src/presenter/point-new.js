@@ -76,6 +76,18 @@ export default class PointNew {
     }
   }
 
+  // setAborting() {
+  //   const resetFormState = () => {
+  //     this._pointEditComponent.updateData({
+  //       isDisabled: false,
+  //       isSaving: false,
+  //       isDeleting: false
+  //     });
+  //   };
+
+  //   this._pointEditComponent.shake(resetFormState);
+  // }
+
   resetView() {
     remove(this._pointEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
@@ -88,7 +100,7 @@ export default class PointNew {
   }
 
   _handleFormSubmit(point) {
-    const updateType = UpdateType.MINOR;
+    let updateType = UpdateType.MINOR;
 
     this._changeData(
         UserAction.ADD_POINT,
@@ -111,7 +123,7 @@ export default class PointNew {
   }
 
   _isFavoriteClick(evt, data) {
-    const updated = Object.assign({}, data, {isFavorite: evt});
+    let updated = Object.assign({}, data, {isFavorite: evt});
     this._changeData(
         UserAction.UPDATE_POINT,
         UpdateType.PATCH,
